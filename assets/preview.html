@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<style>
+  :root { color-scheme: dark; --bg:#0b0c0d; --panel:#141516; --edge:#26292b; --ink:#8b9094; --hi:#eceeef; --acc:#ff7a1a;
+    font: 13px/1.45 ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); padding: 20px 16px 40px; }
+  body.lightpage { --bg:#eceae5; --panel:#f8f7f4; --edge:#d8d5ce; --ink:#5f6368; --hi:#17191b; color-scheme: light; }
+  .wrap { max-width: 980px; margin: 0 auto; display: grid; gap: 14px; }
+  h1 { margin: 0; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--hi); font-weight: 500; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; background: var(--panel); border: 1px solid var(--edge); border-radius: 14px; padding: 10px 12px; }
+  .grp { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+  .grp > span { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; margin-right: 4px; }
+  button, select, label.chk { font: inherit; color: var(--ink); background: none; border: 1px solid var(--edge); border-radius: 8px; padding: 5px 9px; cursor: pointer; }
+  button:hover, label.chk:hover { color: var(--hi); }
+  button[aria-pressed="true"] { color: var(--hi); border-color: var(--acc); }
+  button.go { color: var(--hi); }
+  input[type=color] { width: 30px; height: 26px; border: 1px solid var(--edge); border-radius: 8px; background: none; padding: 2px; }
+  .spacer { flex: 1; }
+  #status { font-size: 12px; min-height: 1.4em; }
+  textarea { width: 100%; height: 86px; background: var(--panel); color: var(--hi); border: 1px solid var(--edge); border-radius: 10px; padding: 10px; font: 12px/1.4 ui-monospace, monospace; resize: vertical; }
+  .stage { display: grid; gap: 18px; }
+  #result { display: none; background: var(--panel); border: 1px solid var(--edge); border-radius: 14px; padding: 12px; gap: 10px; }
+  #result.on { display: grid; }
+  #result .head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  #result .hint { font-size: 12px; }
+  #result img, #result video { max-width: 100%; height: auto; border-radius: 8px; justify-self: start; }
+  #result textarea { height: 160px; }
+  @media (max-width: 600px) { .bar { padding: 8px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>{{TITLE}} · isogram preview</h1>
+  <div class="bar">
+    <div class="grp" id="looks"><span>Look</span></div>
+    <div class="grp" id="themes"><span>Theme</span></div>
+    <div class="grp"><span>Accent</span><input type="color" id="accent" aria-label="Accent colour"><button id="accReset">reset</button></div>
+    <div class="grp"><label class="chk"><input type="checkbox" id="frame" checked> frame</label><label class="chk"><input type="checkbox" id="labels" checked> text</label><label class="chk"><input type="checkbox" id="progress" checked> progress bar</label><label class="chk"><input type="checkbox" id="transparent"> transparent</label><label class="chk">pixel size <select id="pxsize" aria-label="Pixel size"><option value="">auto</option><option>1</option><option>2</option><option>3</option><option>4</option></select></label><label class="chk"><input type="checkbox" id="lightpage"> light page</label></div>
+  </div>
+  <div class="stage" id="stage"></div>
+  <div class="bar">
+    <div class="grp"><span>Export</span>
+      <button class="go" data-x="gif">GIF</button><button class="go" data-x="png">PNG</button><button class="go" data-x="svg">SVG</button>
+      <button class="go" data-x="webm">WebM</button><button class="go" data-x="sheet">Step sheet</button><button class="go" data-x="embed">Embed .html</button>
+    </div>
+    <div class="grp"><span>Width</span><select id="width"><option>480</option><option selected>800</option><option>1200</option><option>1600</option></select></div>
+    <div class="spacer"></div><div id="status" role="status"></div>
+  </div>
+  <div id="result" role="region" aria-label="Export result">
+    <div class="head"><span class="hint" id="resultHint"></span><span><button id="resultCopy" hidden>Copy</button> <button id="resultClose">Close</button></span></div>
+    <div id="resultBody"></div>
+  </div>
+  <textarea id="code" readonly aria-label="Embed code"></textarea>
+</div>
+<script id="isogram-kit">
+/*{{KIT}}*/
+</script>
+<script id="isogram-defs">
+/*{{DEFS}}*/
+</script>
+<script>
+(() => {
+  const NAME = '{{NAME}}', IDS = {{IDS}}, $ = id => document.getElementById(id);
+  const stage = $('stage');
+  stage.innerHTML = IDS.map((id, i) => `<iso-gram name="${id}" fig="${i + 1}"></iso-gram>`).join('');
+  const els = [...stage.querySelectorAll('iso-gram')];
+  const def0 = ISOGRAM.get(IDS[0]);
+  const st = { look: new URLSearchParams(location.search).get('look') || def0.look || 'glow', theme: 'default', accent: '', frame: true, labels: true, progress: true, transparent: false, pixelSize: '' };
+  function apply() {
+    els.forEach(el => {
+      el.setAttribute('look', st.look); el.setAttribute('theme', st.theme);
+      st.accent ? el.setAttribute('accent', st.accent) : el.removeAttribute('accent');
+      st.frame ? el.removeAttribute('frame') : el.setAttribute('frame', 'none');
+      st.labels ? el.removeAttribute('labels') : el.setAttribute('labels', 'none');
+      st.pixelSize ? el.setAttribute('pixel-size', st.pixelSize) : el.removeAttribute('pixel-size');
+      st.progress ? el.removeAttribute('progress') : el.setAttribute('progress', 'none');
+      st.transparent ? el.setAttribute('transparent', '') : el.removeAttribute('transparent');
+    });
+    document.querySelectorAll('#looks button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === st.look));
+    document.querySelectorAll('#themes button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === st.theme));
+    const T = ISOGRAM.themeOf(st.look, st.theme === 'default' ? ISOGRAM.LOOKS[st.look].default : st.theme === 'auto' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : st.theme, st.accent || def0.accent);
+    $('accent').value = T.accent.length === 7 ? T.accent : '#ff7a1a';
+    const attrs = [`look="${st.look}"`, st.theme !== 'auto' ? `theme="${st.theme}"` : '', st.accent ? `accent="${st.accent}"` : '', st.frame ? '' : 'frame="none"', st.labels ? '' : 'labels="none"', st.progress ? '' : 'progress="none"', st.pixelSize && st.look === 'pixel' ? `pixel-size="${st.pixelSize}"` : '', st.transparent ? 'transparent' : ''].filter(Boolean).join(' ');
+    $('code').value = `<script src="${NAME}.isogram.js"><\/script>\n` + IDS.map((id, i) => `<iso-gram name="${id}" fig="${i + 1}" ${attrs}></iso-gram>`).join('\n');
+  }
+  Object.entries(ISOGRAM.LOOKS).forEach(([k, L]) => { const b = document.createElement('button'); b.textContent = L.label || k; b.dataset.v = k; b.onclick = () => { st.look = k; apply(); }; $('looks').appendChild(b); });
+  ['default', 'auto', 'light', 'dark'].forEach(k => { const b = document.createElement('button'); b.textContent = k; b.dataset.v = k; b.onclick = () => { st.theme = k; apply(); }; $('themes').appendChild(b); });
+  $('accent').oninput = e => { st.accent = e.target.value; apply(); };
+  $('accReset').onclick = () => { st.accent = ''; apply(); };
+  $('frame').onchange = e => { st.frame = e.target.checked; apply(); };
+  $('labels').onchange = e => { st.labels = e.target.checked; apply(); };
+  $('progress').onchange = e => { st.progress = e.target.checked; apply(); };
+  $('pxsize').onchange = e => { st.pixelSize = e.target.value; apply(); };
+  $('transparent').onchange = e => { st.transparent = e.target.checked; apply(); };
+  $('lightpage').onchange = e => document.body.classList.toggle('lightpage', e.target.checked);
+  // Inside a frame (an app's preview pane) downloads are usually blocked and a blocked one replaces
+  // the page, so there the result is shown here to save by hand. In a normal tab it downloads too.
+  const framed = (() => { try { return window.self !== window.top; } catch (e) { return true; } })();
+  const dataUrl = blob => new Promise(res => { const r = new FileReader(); r.onload = () => res(r.result); r.readAsDataURL(blob); });
+  const copyText = async (ta) => { try { await navigator.clipboard.writeText(ta.value); status('copied'); } catch (e) { ta.focus(); ta.select(); try { document.execCommand('copy'); status('copied'); } catch (e2) { status('select the text and copy it'); } } };
+  async function show(blob, file) {
+    const body = $('resultBody'), hint = $('resultHint'), copy = $('resultCopy'); body.replaceChildren(); copy.hidden = true;
+    const type = blob.type || '';
+    if (/^image\//.test(type) && !/svg/.test(type)) {
+      const img = new Image(); img.src = await dataUrl(blob); img.alt = file; body.appendChild(img);
+      hint.textContent = `${file} · right-click the image → Save image as… (or drag it out)`;
+    } else if (/^video\//.test(type)) {
+      const v = document.createElement('video'); v.src = await dataUrl(blob); v.controls = true; v.loop = true; v.autoplay = true; v.muted = true; body.appendChild(v);
+      hint.textContent = `${file} · right-click the video → Save video as…`;
+    } else {
+      const ta = document.createElement('textarea'); ta.readOnly = true; ta.value = await blob.text(); body.appendChild(ta);
+      copy.hidden = false; copy.onclick = () => copyText(ta);
+      hint.textContent = `${file} · copy this into a file named ${file}`;
+    }
+    $('result').classList.add('on'); $('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  const save = async (blob, file) => {
+    if (!framed) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
+    await show(blob, file);
+  };
+  $('resultClose').onclick = () => $('result').classList.remove('on');
+  const status = s => { $('status').textContent = s; };
+  document.querySelectorAll('[data-x]').forEach(b => b.onclick = async () => {
+    const x = b.dataset.x, el = els[0], w = +$('width').value, base = `${NAME}-${st.look}`;
+    const o = { width: w, frame: st.frame, labels: st.labels, progress: st.progress, transparent: st.transparent, pixelSize: +st.pixelSize || 0 };
+    try {
+      if (x === 'gif') { status('rendering GIF…'); await save(await el.toGIF(Object.assign({}, o, { width: Math.min(w, 960), onProgress: p => status('rendering GIF… ' + Math.round(p * 100) + '%') })), base + '.gif'); }
+      if (x === 'png') await save(await el.toPNG(o), base + '.png');
+      if (x === 'svg') await save(new Blob([el.toSVG(o)], { type: 'image/svg+xml' }), base + '.svg');
+      if (x === 'webm') { status('recording one loop…'); await save(await el.toWebM(o), base + '.webm'); }
+      if (x === 'sheet') await save(await el.toSheet({ width: 520, frame: true, labels: true, progress: true }), base + '-steps.png');
+      if (x === 'embed') {
+        const attrs = $('code').value.split('\n').slice(1).join('\n');
+        const html = `<!-- ${NAME} (isogram) -->\n<script>\n${$('isogram-kit').textContent.trim()}\n${$('isogram-defs').textContent.trim()}\n<\/script>\n${attrs}\n`;
+        await save(new Blob([html], { type: 'text/html' }), `${NAME}.embed.html`);
+      }
+      status('done');
+    } catch (e) { status('error: ' + e.message); console.error(e); }
+  });
+  apply();
+})();
+</script>
+</body>
+</html>
