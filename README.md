@@ -1,12 +1,12 @@
 # isogram
 
-A [Claude](https://claude.ai) skill for animated isometric diagrams that explain how a feature works. You describe the feature; Claude invents a small machine whose motion *is* the explanation (a router whose rule keys light in turn, a carrier stock machine that dispenses a number tile), and hands it back as a drop-in web component, a GIF, a PNG or an SVG.
+A [Claude](https://claude.ai) skill for animated isometric diagrams that explain how a feature works. You describe the feature; Claude invents a small machine whose motion *is* the explanation (a pumpkin whose carved face lights up when the candle goes in, a server that answers a request), and hands it back as a drop-in web component, a GIF, a PNG or an SVG.
 
 **Live demo:** [mattblack.space/skills/isogram](https://mattblack.space/skills/isogram/)
 
 ```html
-<script src="call-routing.isogram.js"></script>
-<iso-gram name="call-routing" look="vector" theme="auto"></iso-gram>
+<script src="pumpkin.isogram.js"></script>
+<iso-gram name="pumpkin" look="vector" theme="auto"></iso-gram>
 ```
 
 ## Install
@@ -33,7 +33,7 @@ Then ask for one:
 | `assets/isogram.js` | The runtime: scene builder, looks, canvas + SVG renderers, GIF encoder, `<iso-gram>` |
 | `scripts/build.py` | `python3 scripts/build.py DIAGRAM.js` → preview page, `NAME.isogram.js`, self-contained embed snippet |
 | `scripts/export.mjs` | Headless PNG/GIF/SVG/step-sheet export (needs an already-installed Chromium + Playwright) |
-| `examples/` | `starter.js` (35 lines), `call-routing.js` and `buy-number.js` (full figures) |
+| `examples/` | `starter.js` (35 lines) and `pumpkin.js` (a full figure: carving a jack-o'-lantern) |
 
 ## Design notes
 

@@ -280,6 +280,8 @@
       front: (x, y, z, w = 0, h = 0) => plane('front', [x, y, z], w, h),
       side: (x, y, z, d = 0, h = 0) => plane('side', [x, y, z], d, h),
       line: (pts, o) => { o = opt(o); push({ k: 'line', pts, role: o.role || 'detail', ...sty(o), w: o.w }); },
+      // any 3D polygon (curved surfaces built from patches, carved shapes): role picks the paint
+      poly: (pts, o) => { o = opt(o); push({ k: 'poly', pts, role: o.role || 'top', ...sty(o), edge: o.edge }); },
       lerp: lerp3, mix,
     };
   }

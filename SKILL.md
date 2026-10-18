@@ -24,8 +24,7 @@ Paths below are relative to this skill's folder (shown when the skill loads).
 | `scripts/build.py` | `python3 build.py DIAGRAM.js [--out DIR] [--name NAME]` writes `NAME.html` (preview + export buttons; in a normal browser tab they download, inside an app's preview pane, where downloads are blocked, the result is shown in the page to save with right-click or copy), `NAME.isogram.js` (one script for `<script src>`) and `NAME.embed.html` (paste-anywhere snippet). No dependencies. |
 | `scripts/export.mjs` | `node export.mjs NAME.html [--looks glow,vector] [--formats png,gif,svg,sheet] [--width 800] [--theme light] [--t ms] [--no-frame] [--no-labels] [--no-progress] [--transparent] [--pixel-size 1|2|3]` writes image files headlessly, named `NAME-<look>.png|gif|svg` and `NAME-<look>-steps.png` (with `--theme`, `-<theme>` is added after the look). Uses Playwright only if a Chromium is **already** installed; never installs one. Exit 2 means "no browser here": the preview page's Export buttons do the same thing. |
 | `examples/starter.js` | 35 lines: request → server → response. Copy this to start. |
-| `examples/call-routing.js` | A full Figure: carrier tower, router with rule keys and a rotary selector, desk phones, voicemail recorder; five beats and a model-driven readout. The quality reference. |
-| `examples/buy-number.js` | A second Figure: search console, carrier stock machine, provisioning press on a belt, call-flow box, desk phone. Shows a part extruding from a slot and riding a belt. |
+| `examples/pumpkin.js` | A full Figure: carving a jack-o'-lantern in five beats (lid, seeds, face, carve, candle). A curved, ribbed body built from `g.poly` lobes, a face wrapped onto the surface, a lid that lifts and returns, a model-driven readout. The quality reference. |
 | `references/api.md` | Every builder, plane and timeline helper, the element's attributes and export methods, and how to add a look. Read it when you write a diagram. |
 | `references/craft.md` | The design rules with reasons: concept-to-object table, parts vocabulary, tone hierarchy, motion envelopes, per-look notes, review checklist. Read it before designing. |
 
@@ -84,8 +83,8 @@ The same diagram code works in every look; never branch on the look except for s
 ## Embedding (what the user gets)
 
 ```html
-<script src="call-routing.isogram.js"></script>
-<iso-gram name="call-routing" look="vector" theme="auto"></iso-gram>
+<script src="pumpkin.isogram.js"></script>
+<iso-gram name="pumpkin" look="vector" theme="auto"></iso-gram>
 ```
 
 Attributes: `look`, `theme`, `accent`, `frame="none"` (drawing only, no card), `labels="none"` (hide the four corner texts: Fig n, title, caption, readout; the card stays), `progress="none"` (hide the step bars), `pixel-size` (pixel look only: CSS px per art pixel; 1 is fine pixel art with readable labels, 2–3 chunkier; absent, about 320 art pixels across), `transparent` (no panel, sits on the page background), `speed`, `paused`, `fig` (the "Fig N" number). The element sizes to its container (aspect from the diagram), uses shadow DOM so the site's CSS can't break it, pauses offscreen, shows the `still` frame under reduced motion, and is keyboard operable (space pauses, ←/→ step through beats; the step bars are clickable). Beat captions are also in a visually hidden list for screen readers and search. In React/Next, load the script once and render the tag (`<iso-gram name="…" look="…" />`; it is a plain custom element).

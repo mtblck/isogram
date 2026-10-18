@@ -9,6 +9,7 @@ Readers understand a mechanism they recognise. Pick a machine, instrument or pie
 | Feature | Object |
 |---|---|
 | Call routing rules | A router with rule keys that light in turn and a rotary selector that swings to the chosen line |
+| A multi-step process (a recipe, onboarding, a build) | The real thing being made, step by step: a pumpkin that is cut, scooped, drawn on, carved and lit |
 | Ring timeout → voicemail | A handset that jiggles while a timer counts, then a tape recorder whose reels spin |
 | A queue and workers | A conveyor carrying cubes to a row of stamping presses; a press lights while busy |
 | Retries with backoff | A ball launcher that re-fires after longer and longer pauses, a counter on its side |

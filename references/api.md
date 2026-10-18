@@ -4,8 +4,8 @@
 
 ```js
 ISOGRAM.define({
-  id: 'call-routing',          // used by <iso-gram name="…">; also the build's default file name
-  title: 'Call routing',       // card title (top right)
+  id: 'pumpkin',               // used by <iso-gram name="…">; also the build's default file name
+  title: "Carving a jack-o'-lantern", // card title (top right)
   aria: '…',                   // what it shows, for screen readers (the element adds the controls)
   duration: 11000,             // one loop, ms
   still: 5600,                 // the moment that explains most: reduced motion, PNG, SVG
@@ -40,6 +40,7 @@ World units ≈ CSS px at the default fit. +x runs down-right, +y down-left, +z 
 | `g.bloom(p,r,lit)` | soft radial light at a 3D point (glow and vector looks) | — |
 | `g.shadow(x,y,w,d,{z,r,lift})` | floor shadow (vector, pixel); `box/cyl({shadow:true})` call it for you | — |
 | `g.line(points,{role,lit,w})` | any 3D polyline (role `detail`, `wire`, …) | — |
+| `g.poly(points,{role,tone,lit,op,edge})` | any 3D polygon: curved surfaces as patches (a pumpkin's lobes), shapes mapped onto them (a carved face). `role` picks the paint (`top`/`front`/`side` shade like faces, `recess`, `led`, …) | — |
 | `g.term(p,lit,r)` | terminal dot | — |
 | `g.sorted([{ b:[x,y,z,w,d,h], draw(){…} }])` | draws items in true depth order (separating-axis sort); use for parts that pass each other | — |
 | `g.top(x,y,z,w,d)`, `g.front(x,y,z,w,h)`, `g.side(x,y,z,d,h)` | a free face plane (origin = face top-left) | plane |
