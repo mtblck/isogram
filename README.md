@@ -11,7 +11,7 @@ A [Claude](https://claude.ai) skill for animated isometric diagrams that explain
 
 ## Install
 
-Download `isogram.skill` from the [latest release](https://github.com/mtblck/isogram/releases) (or zip this folder as `isogram/`) and add it to Claude as a skill. In Claude Code you can also copy the folder to `~/.claude/skills/isogram/`.
+Download [`isogram.skill`](https://mattblack.space/skills/isogram/isogram.skill) from the demo page (or zip this folder as `isogram/`) and add it to Claude as a skill. In Claude Code you can also copy the folder to `~/.claude/skills/isogram/`.
 
 Then ask for one:
 
