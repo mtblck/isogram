@@ -49,6 +49,23 @@ for (const f of examples()) {
   await page.evaluate(() => document.querySelector('#d').shadowRoot.querySelector('.stage').focus()); await page.keyboard.press('ArrowRight'); await page.waitForTimeout(100)
   if (await page.evaluate(() => document.querySelector('#d')._t) === before) fails.push(`${id}: ArrowRight did not step`)
 
+  // The transport (controls attribute): scrubbing sets the time, frame steps move by 1/30 s, and stills
+  // save the frame on screen.
+  const tr = await page.evaluate(() => {
+    const e = document.querySelector('#d'); e.setAttribute('controls', '')
+    const bar = e.shadowRoot.querySelector('.transport'), r = e.shadowRoot.querySelector('.transport input')
+    r.value = String(Math.round(e.duration * 0.37)); r.dispatchEvent(new Event('input'))
+    const t1 = e.currentTime, paused = e.paused
+    e.shadowRoot.querySelector('.fwd').click()
+    const t2 = e.currentTime, same = e.toSVG({ width: 300 }) === e.toSVG({ width: 300, t: t2 }), shown = getComputedStyle(bar).display !== 'none'
+    e.removeAttribute('controls')
+    return { shown, t1, want: Math.round(e.duration * 0.37), paused, step: t2 - t1, same }
+  })
+  if (!tr.shown) fails.push(`${id}: controls attribute shows no transport`)
+  if (tr.t1 !== tr.want || !tr.paused) fails.push(`${id}: scrubbing did not pause at the scrubbed time (${tr.t1} vs ${tr.want})`)
+  if (Math.abs(tr.step - 1000 / 30) > 0.5) fails.push(`${id}: frame step moved ${tr.step} ms`)
+  if (!tr.same) fails.push(`${id}: SVG export is not the frame on screen`)
+
   const sizes = await page.evaluate(async () => {
     const e = document.querySelector('#d')
     e.setAttribute('look', 'vector')
@@ -106,6 +123,8 @@ if (fs.existsSync(path.join(ROOT, 'dist', 'site', 'index.html'))) {
     if (!/name="robot"/.test(await page.textContent('#embed'))) fails.push(`site/${theme}: embed code does not follow the playground`)
     await page.click('label:has(input[name="pg-theme"][value="light"])')
     if (await page.getAttribute('#pg', 'theme') !== 'light' || !/theme="light"/.test(await page.textContent('#embed'))) fails.push(`site/${theme}: playground theme switch does nothing`)
+    if (!(await page.evaluate(() => getComputedStyle(document.querySelector('#pg').shadowRoot.querySelector('.transport')).display !== 'none'))) fails.push(`site/${theme}: playground has no transport controls`)
+    if (await page.evaluate(() => getComputedStyle(document.querySelector('.top')).position) !== 'sticky') fails.push(`site/${theme}: header is not sticky`)
     if (!(await page.isDisabled('#pg-pixel'))) fails.push(`site/${theme}: pixel size is enabled outside the pixel look`)
     await page.click('label:has(input[name="pg-look"][value="pixel"])')
     if (await page.isDisabled('#pg-pixel')) fails.push(`site/${theme}: pixel size stays disabled in the pixel look`)

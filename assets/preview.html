@@ -28,6 +28,7 @@
   #result.on { display: grid; }
   #result .head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
   #result .hint { font-size: 12px; }
+  .bar .hint { font-size: 12px; opacity: .7; }
   #result img, #result video { max-width: 100%; height: auto; border-radius: 8px; justify-self: start; }
   #result textarea { height: 160px; }
   @media (max-width: 600px) { .bar { padding: 8px; } }
@@ -47,6 +48,7 @@
     <div class="grp"><span>Export</span>
       <button class="go" data-x="gif">GIF</button><button class="go" data-x="png">PNG</button><button class="go" data-x="svg">SVG</button>
       <button class="go" data-x="webm">WebM</button><button class="go" data-x="sheet">Step sheet</button><button class="go" data-x="embed">Embed .html</button>
+      <span class="hint">PNG and SVG save the frame on screen: pause and scrub to pick it</span>
     </div>
     <div class="grp"><span>Width</span><select id="width"><option>480</option><option selected>800</option><option>1200</option><option>1600</option></select></div>
     <div class="spacer"></div><div id="status" role="status"></div>
@@ -67,7 +69,8 @@
 (() => {
   const NAME = '{{NAME}}', IDS = {{IDS}}, $ = id => document.getElementById(id);
   const stage = $('stage');
-  stage.innerHTML = IDS.map((id, i) => `<iso-gram name="${id}" fig="${i + 1}"></iso-gram>`).join('');
+  // controls: play/pause, frame steps and a scrubber under each diagram; PNG and SVG save the frame on screen
+  stage.innerHTML = IDS.map((id, i) => `<iso-gram name="${id}" fig="${i + 1}" controls></iso-gram>`).join('');
   const els = [...stage.querySelectorAll('iso-gram')];
   const def0 = ISOGRAM.get(IDS[0]);
   const st = { look: new URLSearchParams(location.search).get('look') || def0.look || 'glow', theme: 'default', accent: '', frame: true, labels: true, progress: true, transparent: false, pixelSize: '' };

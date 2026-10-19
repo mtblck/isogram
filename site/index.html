@@ -18,7 +18,7 @@
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
-  <header class="top wrap">
+  <header class="top"><div class="wrap">
     <a class="mark" href="/" aria-label="isogram home">{{logo}}isogram</a>
     <nav aria-label="Site">
       <a href="#examples">Examples</a>
@@ -28,7 +28,7 @@
       <a href="https://github.com/mtblck/isogram">GitHub</a>
     </nav>
     <button class="theme" id="theme" type="button">Dark</button>
-  </header>
+  </div></header>
 
   <main id="main">
     <div class="hero wrap">
@@ -88,7 +88,7 @@
         </div>
         <div class="playground">
           <div>
-            <iso-gram id="pg" name="rocket" look="vector"></iso-gram>
+            <iso-gram id="pg" name="rocket" look="vector" controls></iso-gram>
             <div class="code">
               <div class="code-head"><span>Embed code</span><button class="btn small" id="copy-embed" type="button">Copy</button></div>
               <pre><code id="embed"></code></pre>
@@ -140,7 +140,7 @@
               <select id="pg-pixel" aria-label="Pixel size" disabled><option value="">Automatic</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
             </fieldset>
             <fieldset aria-describedby="d-export"><legend>Export</legend>
-              <p class="desc" id="d-export">Files of the diagram as it's set up here. SVG is for the vector looks; GIF and WebM record one loop.</p>
+              <p class="desc" id="d-export">PNG and SVG save the frame on screen: pause, then scrub or step a frame at a time (<kbd>,</kbd> and <kbd>.</kbd>) to pick it. GIF and WebM record the whole loop. SVG is for the vector looks.</p>
               <div class="exports">
                 <button class="btn small" type="button" data-x="gif">GIF</button>
                 <button class="btn small" type="button" data-x="png">PNG</button>

@@ -704,13 +704,23 @@
     .bare.card { background:none; border:0; padding:0; }
     .bare .row, .bare .steps, .nolabels .row, .noprogress .steps { display:none; }
     .clear.card { background:transparent; border-color:transparent; }
+    .transport { display:none; align-items:center; gap:8px; }
+    .controls .transport { display:flex; } .controls .play { display:none; }
+    .transport button { flex:none; width:28px; height:28px; border-radius:8px; border:1px solid var(--line); background:none; color:var(--ink-hi); display:grid; place-items:center; cursor:pointer; padding:0; }
+    .transport button:hover { border-color:var(--ink); }
+    .transport button:focus-visible, .transport input:focus-visible { outline:1px solid var(--accent); outline-offset:2px; }
+    .transport svg { width:10px; height:10px; fill:currentColor; }
+    .transport input { flex:1; min-width:60px; margin:0; accent-color:var(--accent); cursor:pointer; }
+    .transport output { flex:none; min-width:7.5em; text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-hi); }
     .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
     @media (prefers-reduced-motion: reduce) { .play { transition:none; } }
   `;
+  const BACK = '<svg viewBox="0 0 10 10"><rect x="1" y="1" width="1.6" height="8"/><path d="M9 1 L3.4 5 L9 9Z"/></svg>', FWD = '<svg viewBox="0 0 10 10"><rect x="7.4" y="1" width="1.6" height="8"/><path d="M1 1 L6.6 5 L1 9Z"/></svg>';
+  const FRAME = 1000 / 30;   // one frame step, ms
   const PLAY = '<svg viewBox="0 0 10 10"><path d="M2 1 L9 5 L2 9Z"/></svg>', PAUSE = '<svg viewBox="0 0 10 10"><rect x="2" y="1" width="2.2" height="8"/><rect x="5.8" y="1" width="2.2" height="8"/></svg>';
 
   class IsoDiagram extends HTMLElement {
-    static get observedAttributes() { return ['name', 'look', 'theme', 'accent', 'frame', 'labels', 'progress', 'transparent', 'speed', 'fig', 'paused', 'pixel-size']; }
+    static get observedAttributes() { return ['name', 'look', 'theme', 'accent', 'frame', 'labels', 'progress', 'transparent', 'speed', 'fig', 'paused', 'pixel-size', 'controls']; }
     constructor() { super(); this._t = 0; this._last = 0; this._raf = 0; this._vis = true; this._playing = true; this._opts = {}; }
     connectedCallback() {
       if (this._root) return this._start();
@@ -719,17 +729,24 @@
         <div class="row" part="head"><span class="hi fig">Fig 1</span><span class="title"></span></div>
         <div class="stage" tabindex="0" part="stage"><canvas></canvas><button class="play" aria-label="Pause">${PAUSE}</button></div>
         <div class="steps" part="steps"></div>
+        <div class="transport" part="transport"><button class="tplay" aria-label="Pause">${PAUSE}</button><button class="back" aria-label="Back one frame">${BACK}</button><input type="range" min="0" step="1" aria-label="Time"><button class="fwd" aria-label="Forward one frame">${FWD}</button><output aria-live="off"></output></div>
         <div class="row" part="foot"><span class="cap"></span><span class="read"></span></div>
         <ol class="sr"></ol></figure>`;
       const $ = s => r.querySelector(s);
-      this._el = { card: $('.card'), fig: $('.fig'), title: $('.title'), stage: $('.stage'), cv: $('canvas'), play: $('.play'), steps: $('.steps'), cap: $('.cap'), read: $('.read'), sr: $('.sr') };
+      this._el = { card: $('.card'), fig: $('.fig'), title: $('.title'), stage: $('.stage'), cv: $('canvas'), play: $('.play'), steps: $('.steps'), tplay: $('.tplay'), scrub: $('.transport input'), time: $('.transport output'), cap: $('.cap'), read: $('.read'), sr: $('.sr') };
       this._ctx = this._el.cv.getContext('2d');
       this._el.stage.addEventListener('click', e => { if (!e.target.closest('.play')) this.toggle(); });
       this._el.play.addEventListener('click', () => this.toggle());
+      // transport (the controls attribute): play/pause, frame steps and a scrubber, for picking the frame to export
+      this._el.tplay.addEventListener('click', () => this.toggle());
+      $('.back').addEventListener('click', () => this.frameStep(-1));
+      $('.fwd').addEventListener('click', () => this.frameStep(1));
+      this._el.scrub.addEventListener('input', e => { const t = +e.target.value; this.pause(); this.seek(t); });   // read first: pausing redraws the bar
       this._el.stage.addEventListener('keydown', e => {
         if (e.key === ' ' || e.key === 'Enter') { this.toggle(); e.preventDefault(); }
         else if (e.key === 'ArrowRight') { this.step(1); e.preventDefault(); }
         else if (e.key === 'ArrowLeft') { this.step(-1); e.preventDefault(); }
+        else if (e.key === ',' || e.key === '.') { this.frameStep(e.key === '.' ? 1 : -1); e.preventDefault(); }
       });
       this._el.steps.addEventListener('click', e => { const b = e.target.closest('button[data-i]'); if (b) this.goto(+b.dataset.i); });
       this._mq = matchMedia('(prefers-color-scheme: dark)'); this._rm = matchMedia('(prefers-reduced-motion: reduce)');
@@ -780,6 +797,7 @@
       e.card.classList.toggle('clear', this.hasAttribute('transparent'));
       e.card.classList.toggle('nolabels', this.getAttribute('labels') === 'none');
       e.card.classList.toggle('noprogress', this.getAttribute('progress') === 'none');
+      e.card.classList.toggle('controls', this.hasAttribute('controls'));
     }
     _resize() {
       if (!this._def) return; const r = this._el.stage.getBoundingClientRect(); if (!r.width) return;
@@ -799,7 +817,12 @@
       if (sc.readout !== this._read) { e.read.textContent = this._read = sc.readout; }
       if (this._bars) this._bars.forEach((s, i) => { const f = i < sc.k.i ? 1 : i > sc.k.i ? 0 : sc.k.u; s.style.width = (f * 100).toFixed(1) + '%'; });
       e.card.classList.toggle('paused', !this._playing);
-      e.play.innerHTML = this._playing ? PAUSE : PLAY; e.play.setAttribute('aria-label', this._playing ? 'Pause' : 'Play');
+      e.play.innerHTML = e.tplay.innerHTML = this._playing ? PAUSE : PLAY;
+      e.play.setAttribute('aria-label', this._playing ? 'Pause' : 'Play'); e.tplay.setAttribute('aria-label', this._playing ? 'Pause' : 'Play');
+      if (this.hasAttribute('controls')) {
+        e.scrub.max = String(Math.round(this._def.duration)); e.scrub.value = String(Math.round(this._t));
+        e.time.textContent = (this._t / 1000).toFixed(2) + ' / ' + (this._def.duration / 1000).toFixed(2) + ' s';
+      }
     }
     _loop() {
       cancelAnimationFrame(this._raf); this._raf = 0;
@@ -816,15 +839,22 @@
     goto(i) { const d = this._def; if (!d) return; const n = d.beats.length; i = ((i % n) + n) % n;
       const b = d.beats[i], end = i + 1 < n ? d.beats[i + 1].at : d.duration; this._t = b.show != null ? b.show : b.at + (end - b.at) * (this._playing ? 0 : 0.7); this._draw(); }
     step(dir) { if (this._def) { const k = clock(this._def, this._t); this.goto(k.i + dir); } }
-    seek(t) { this._t = t; this._draw(); }
+    seek(t) { if (!this._def) return; const d = this._def.duration; this._t = ((+t % d) + d) % d; this._draw(); }
+    frameStep(dir) { this.pause(); this.seek(this._t + dir * FRAME); }
+    get currentTime() { return this._t; }
+    set currentTime(t) { this.seek(t); }
+    get duration() { return this._def ? this._def.duration : 0; }
+    get paused() { return !this._playing; }
 
     /* ---- exports ---- */
     _xopts(o) { o = o || {}; const look = o.look || this.look; const T = themeOf(look, o.theme || (o.look ? LOOKS[look].default : this.theme), o.accent || this.getAttribute('accent') || this._def.accent);
       return { look, T, width: o.width || 800, frame: o.frame == null ? this.getAttribute('frame') !== 'none' : o.frame,
         labels: o.labels == null ? this.getAttribute('labels') !== 'none' : o.labels, pixelSize: o.pixelSize || parseFloat(this.getAttribute('pixel-size')) || 0, progress: o.progress == null ? this.getAttribute('progress') !== 'none' : o.progress, transparent: !!o.transparent, fig: this.getAttribute('fig') || 1 }; }
-    toCanvas(o = {}) { const x = this._xopts(o); return renderExport(this._def, o.t == null ? this._def.still : o.t, x).canvas; }
+    // Stills default to the frame on screen; o.t takes a time in ms, or 'still' for the diagram's chosen frame.
+    _frameT(o) { return o.t == null ? this._t : o.t === 'still' ? this._def.still : +o.t; }
+    toCanvas(o = {}) { const x = this._xopts(o); return renderExport(this._def, this._frameT(o), x).canvas; }
     toPNG(o = {}) { return new Promise(res => this.toCanvas(o).toBlob(res, 'image/png')); }
-    toSVG(o = {}) { const x = this._xopts(o); return toSVG(this._def, o.t == null ? this._def.still : o.t, x); }
+    toSVG(o = {}) { const x = this._xopts(o); return toSVG(this._def, this._frameT(o), x); }
     async toGIF(o = {}) {
       const def = this._def, x = this._xopts(Object.assign({ width: 640 }, o)), fps = o.fps || 20, n = Math.max(1, Math.round(def.duration / 1000 * fps));
       const datas = []; let cv = null;

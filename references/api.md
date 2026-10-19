@@ -87,9 +87,10 @@ World units ≈ CSS px at the default fit. +x runs down-right, +y down-left, +z 
 
 ## Element `<iso-gram>`
 
-Attributes: `name`, `look`, `pixel-size` (pixel look: CSS px per art pixel; absent ≈ 320 art pixels across), `theme` (`auto` follows the OS, `default` uses the look's own, `light`, `dark`), `accent`, `frame="none"` (no card at all), `labels="none"` (no corner texts), `progress="none"` (no step bars), `transparent`, `speed`, `paused`, `fig`. Without the corner texts the beat captions are still in the screen-reader list.
-CSS: style the host like any block element (width, margin); set `--isogram-sans`, `--isogram-mono` or `--isogram-pixel` on the page to put the card's text in your site's fonts; `::part(card)`, `::part(stage)`, `::part(head)`, `::part(foot)`, `::part(steps)` for fine tuning.
-Methods: `play() pause() toggle() step(±1) goto(i) seek(ms)`;
+Attributes: `name`, `look`, `pixel-size` (pixel look: CSS px per art pixel; absent ≈ 320 art pixels across), `theme` (`auto` follows the OS, `default` uses the look's own, `light`, `dark`), `accent`, `frame="none"` (no card at all), `labels="none"` (no corner texts), `progress="none"` (no step bars), `transparent`, `speed`, `paused`, `fig`, `controls` (a transport bar under the stage: play/pause, one-frame steps, a scrubber and the time; use it wherever someone picks a frame to export). Without the corner texts the beat captions are still in the screen-reader list.
+CSS: style the host like any block element (width, margin); set `--isogram-sans`, `--isogram-mono` or `--isogram-pixel` on the page to put the card's text in your site's fonts; `::part(card)`, `::part(stage)`, `::part(head)`, `::part(foot)`, `::part(steps)`, `::part(transport)` for fine tuning.
+Methods: `play() pause() toggle() step(±1) goto(i) seek(ms) frameStep(±1)` (one 1/30 s frame, pauses); properties `currentTime` (ms, settable), `duration`, `paused`. Keys on the focused stage: space pauses, ←/→ step through beats, `,`/`.` step one frame.
+Stills (`toPNG`, `toSVG`, `toCanvas`) save the frame on screen unless `t` says otherwise: a time in ms, or `'still'` for the diagram's chosen frame.
 exports `toPNG({t,width,frame,labels,progress,transparent,look,theme,accent})` (each export takes the same options; they default to the element's attributes) → Blob, `toGIF({width=640,fps=20,frame,onProgress})` → Blob, `toSVG({t,…})` → string (not pixel), `toWebM({width,fps})` → Blob (records one loop in real time), `toSheet({width,cols})` → Blob, `toCanvas(…)`.
 
 ## Adding a look
