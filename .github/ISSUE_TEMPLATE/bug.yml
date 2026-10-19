@@ -1,0 +1,28 @@
+name: Bug report
+description: A diagram drew wrongly, an export failed, or the skill led Claude astray.
+labels: [type:bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you expected, and what you got. A screenshot or the exported file helps most.
+    validations:
+      required: true
+  - type: dropdown
+    id: look
+    attributes:
+      label: Look
+      options: [Glow, Vector, Pixel, Blueprint, All of them, Not applicable]
+    validations:
+      required: true
+  - type: textarea
+    id: diagram
+    attributes:
+      label: The diagram
+      description: The diagram's .js file, or which example. If it's Claude's output, the prompt you gave it.
+  - type: input
+    id: where
+    attributes:
+      label: Where it ran
+      placeholder: "Chrome 141 on macOS, Claude.ai preview pane, or export.mjs"

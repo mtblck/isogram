@@ -1,0 +1,15 @@
+name: Feature request
+description: Something isogram should draw or do.
+labels: [type:feature]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to show?
+      description: The feature you're explaining, not the primitive. "A queue filling and draining" is more useful than "add a conveyor helper".
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would help

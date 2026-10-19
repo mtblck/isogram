@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Test and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # parse checks, every example's scene at many times in every look, build.py, the skill's contents
+      - run: npm test
+      # every example through build.py, and dist/isogram.skill from the skill files only
+      - run: npm run build
+
+  e2e:
+    name: E2E (real browser)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      # every example in every look and theme draws, with no console errors, and exports
+      - run: npm run verify
+        env:
+          SHOTS: shots
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: e2e-shots
+          path: shots
+          if-no-files-found: ignore
