@@ -37,7 +37,7 @@
 }
 
 * { box-sizing: border-box; }
-html { background: var(--paper); scroll-padding-top: 24px; }
+html { background: var(--paper); scroll-padding-top: 88px; }
 body {
   margin: 0; color: var(--ink); font: 400 1.0625rem/1.6 var(--sans); -webkit-font-smoothing: antialiased;
   /* isometric dot paper: two offset dot grids make a triangular lattice */
@@ -59,14 +59,15 @@ h1, h2, h3 { font-family: var(--sans); text-wrap: balance; }
 p, li { text-wrap: pretty; }
 
 /* ---- header ---- */
-.top { display: flex; align-items: center; gap: 24px; padding: 18px 0; }
+.top { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--rule); }
+.top .wrap { display: flex; align-items: center; gap: 24px; padding: 14px 0; }
 .mark { display: inline-flex; align-items: center; gap: 10px; font: 700 1.3rem/1 var(--sans); font-stretch: 85%; letter-spacing: -0.01em; text-decoration: none; }
 .mark svg { width: 26px; height: 26px; }
 .top nav { display: flex; gap: 20px; margin-left: auto; font-size: 0.95rem; }
 .top nav a { text-decoration: none; color: var(--ink-2); }
 .top nav a:hover, .top nav a[aria-current] { color: var(--ink); }
-.theme { font: inherit; font-size: 0.9rem; color: var(--ink-2); background: none; border: 1px solid var(--rule); border-radius: 8px; padding: 6px 10px; cursor: pointer; }
-.theme:hover { color: var(--ink); border-color: var(--ink-2); }
+.theme { font: inherit; font-size: 0.9rem; font-weight: 600; color: var(--ink); background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 6px 12px; cursor: pointer; }
+.theme:hover { border-color: var(--ink-2); }
 @media (max-width: 720px) { .top nav { display: none; } .theme { margin-left: auto; } }
 
 /* ---- buttons ---- */
@@ -168,7 +169,7 @@ footer p { margin: 0 0 8px; max-width: 60em; }
 
 /* ---- docs ---- */
 .docs { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; padding: 24px 0 72px; }
-.docs nav { position: sticky; top: 24px; align-self: start; display: grid; gap: 4px; }
+.docs nav { position: sticky; top: 88px; align-self: start; display: grid; gap: 4px; }
 .docs nav a { text-decoration: none; color: var(--ink-2); padding: 6px 10px; border-radius: 8px; }
 .docs nav a[aria-current] { color: var(--ink); background: var(--accent-soft); font-weight: 600; }
 .prose { background: var(--card); border: 1px solid var(--rule); border-radius: 16px; padding: clamp(20px, 4vw, 48px); min-width: 0; }

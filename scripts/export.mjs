@@ -39,6 +39,7 @@ try {
   for (const look of all) for (const f of formats) {
     const r = await page.evaluate(async ({ look, f, o }) => {
       const el = document.querySelector('iso-gram'), x = Object.assign({}, o, { look });
+      if (x.t == null) x.t = 'still';   // stills: --t, else the diagram's chosen frame (not whatever is on screen)
       const b64 = async blob => { const buf = new Uint8Array(await blob.arrayBuffer()); let s = ''; for (let i = 0; i < buf.length; i += 0x8000) s += String.fromCharCode(...buf.subarray(i, i + 0x8000)); return btoa(s); };
       if (f === 'png') return { ext: 'png', data: await b64(await el.toPNG(x)) };
       if (f === 'gif') return { ext: 'gif', data: await b64(await el.toGIF(Object.assign(x, { width: Math.min(o.width, 960) }))) };
