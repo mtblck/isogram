@@ -107,9 +107,14 @@
   };
 
   // resolve a theme: derive lit tones from the accent (optionally overridden by the page)
-  function themeOf(lookName, themeName, accent) {
+  // a CSS hex colour (#rgb or #rrggbb) as #rrggbb, else null; the looks mix and palette-snap hex only
+  const hex6 = c => { const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(String(c || '').trim()); if (!m) return null;
+    const h = m[1].length === 3 ? m[1].split('').map(x => x + x).join('') : m[1]; return '#' + h.toLowerCase(); };
+  function themeOf(lookName, themeName, accent, background) {
     const L = LOOKS[lookName] || LOOKS.glow, base = L.themes[themeName] || L.themes[L.default];
     const T = Object.assign({}, base);
+    const bg = hex6(background);
+    if (bg) { T.panel = bg; T.bg = bg; }   // the card and everything around it; wires' under-strokes and pixel palettes follow
     if (accent) { T.accent = accent; T.accentHi = mix(accent, '#ffffff', 0.45); T.litSide = null; }
     T.litTop = T.litTop || mix(T.accent, T.accentHi, 0.75);
     T.litFront = T.litFront || T.accent;
@@ -720,7 +725,7 @@
   const PLAY = '<svg viewBox="0 0 10 10"><path d="M2 1 L9 5 L2 9Z"/></svg>', PAUSE = '<svg viewBox="0 0 10 10"><rect x="2" y="1" width="2.2" height="8"/><rect x="5.8" y="1" width="2.2" height="8"/></svg>';
 
   class IsoDiagram extends HTMLElement {
-    static get observedAttributes() { return ['name', 'look', 'theme', 'accent', 'frame', 'labels', 'progress', 'transparent', 'speed', 'fig', 'paused', 'pixel-size', 'controls']; }
+    static get observedAttributes() { return ['name', 'look', 'theme', 'accent', 'background', 'frame', 'labels', 'progress', 'transparent', 'speed', 'fig', 'paused', 'pixel-size', 'controls']; }
     constructor() { super(); this._t = 0; this._last = 0; this._raf = 0; this._vis = true; this._playing = true; this._opts = {}; }
     connectedCallback() {
       if (this._root) return this._start();
@@ -784,7 +789,7 @@
       return this._mq && this._mq.matches ? 'dark' : 'light';
     }
     _applyTheme() {
-      const L = LOOKS[this.look], T = this._T = themeOf(this.look, this.theme, this.getAttribute('accent') || (this._def && this._def.accent));
+      const L = LOOKS[this.look], T = this._T = themeOf(this.look, this.theme, this.getAttribute('accent') || (this._def && this._def.accent), this.getAttribute('background') || (this._def && this._def.background));
       this._opts = { look: this.look, T, transparent: this.hasAttribute('transparent') };
       const s = this.style;
       [['--panel', T.panel], ['--line', T.line], ['--ink', T.ink], ['--ink-hi', T.inkHi], ['--accent', T.accent],
@@ -852,7 +857,7 @@
     get paused() { return !this._playing; }
 
     /* ---- exports ---- */
-    _xopts(o) { o = o || {}; const look = o.look || this.look; const T = themeOf(look, o.theme || (o.look ? LOOKS[look].default : this.theme), o.accent || this.getAttribute('accent') || this._def.accent);
+    _xopts(o) { o = o || {}; const look = o.look || this.look; const T = themeOf(look, o.theme || (o.look ? LOOKS[look].default : this.theme), o.accent || this.getAttribute('accent') || this._def.accent, o.background || this.getAttribute('background') || this._def.background);
       return { look, T, width: o.width || 800, frame: o.frame == null ? this.getAttribute('frame') !== 'none' : o.frame,
         labels: o.labels == null ? this.getAttribute('labels') !== 'none' : o.labels, pixelSize: o.pixelSize || parseFloat(this.getAttribute('pixel-size')) || 1, progress: o.progress == null ? this.getAttribute('progress') !== 'none' : o.progress, transparent: !!o.transparent, fig: this.getAttribute('fig') || 1 }; }
     // Stills default to the frame on screen; o.t takes a time in ms, or 'still' for the diagram's chosen frame.

@@ -33,9 +33,10 @@
   // starts on the page's cobalt for that theme until the visitor picks a colour, and Reset goes back to it.
   var sysTheme = function () { return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light' }
   var drawnFor = function (name) { var d = window.ISOGRAM && ISOGRAM.get(name); return (d && d.theme) || sysTheme() }
-  var st = { name: 'rocket', look: 'vector', theme: drawnFor('rocket'), frame: true, labels: true, progress: true, accent: '', pixel: '1' }
+  var st = { name: 'rocket', look: 'vector', theme: drawnFor('rocket'), frame: true, labels: true, progress: true, accent: '', background: '', pixel: '1' }
   function attrs() {
     var a = { name: st.name, look: st.look, theme: st.theme, accent: st.accent || ACCENT[st.theme] }
+    if (st.background) a.background = st.background
     if (!st.frame) a.frame = 'none'
     if (!st.labels) a.labels = 'none'
     if (!st.progress) a.progress = 'none'
@@ -44,13 +45,16 @@
   }
   function apply() {
     var a = attrs()
-    ;['name', 'look', 'theme', 'accent', 'frame', 'labels', 'progress', 'pixel-size'].forEach(function (k) {
+    
+    ;['name', 'look', 'theme', 'accent', 'background', 'frame', 'labels', 'progress', 'pixel-size'].forEach(function (k) {
       if (a[k] != null) main.setAttribute(k, a[k]); else main.removeAttribute(k)
     })
     $$('input[name="pg-theme"]').forEach(function (r) { r.checked = r.value === st.theme })
     $('#pg-pixel').disabled = st.look !== 'pixel'
     $('#pg-accent').value = a.accent
     $('#pg-accent-reset').disabled = !st.accent
+    $('#pg-bg').value = st.background || ISOGRAM.themeOf(st.look, st.theme).panel   // the look's own card colour until one is picked
+    $('#pg-bg-reset').disabled = !st.background
     var tag = '<iso-gram ' + Object.keys(a).map(function (k) { return k + '="' + a[k] + '"' }).join(' ') + '></iso-gram>'
     $('#embed').textContent = '<script src="' + st.name + '.isogram.js"></script>\n' + tag
   }
@@ -62,6 +66,8 @@
   $('#pg-progress').addEventListener('change', function (e) { st.progress = e.target.checked; apply() })
   $('#pg-accent').addEventListener('input', function (e) { st.accent = e.target.value; apply() })
   $('#pg-accent-reset').addEventListener('click', function () { st.accent = ''; apply() })
+  $('#pg-bg').addEventListener('input', function (e) { st.background = e.target.value; apply() })
+  $('#pg-bg-reset').addEventListener('click', function () { st.background = ''; apply() })
   $('#pg-pixel').addEventListener('change', function (e) { st.pixel = e.target.value; apply() })
 
   // ---- exports (downloads; the site is never framed) ----

@@ -41,6 +41,7 @@
     <div class="grp" id="looks"><span>Look</span></div>
     <div class="grp" id="themes"><span>Theme</span></div>
     <div class="grp"><span>Accent</span><input type="color" id="accent" aria-label="Accent colour"><button id="accReset">reset</button></div>
+    <div class="grp"><span>Background</span><input type="color" id="bgcol" aria-label="Background colour"><button id="bgReset">reset</button></div>
     <div class="grp"><label class="chk"><input type="checkbox" id="frame" checked> frame</label><label class="chk"><input type="checkbox" id="labels" checked> text</label><label class="chk"><input type="checkbox" id="progress" checked> progress bar</label><label class="chk"><input type="checkbox" id="transparent"> transparent</label><label class="chk">pixel size <select id="pxsize" aria-label="Pixel size"><option selected>1</option><option>2</option><option>3</option><option>4</option></select></label><label class="chk"><input type="checkbox" id="lightpage"> light page</label></div>
   </div>
   <div class="stage" id="stage"></div>
@@ -73,11 +74,12 @@
   stage.innerHTML = IDS.map((id, i) => `<iso-gram name="${id}" fig="${i + 1}" controls></iso-gram>`).join('');
   const els = [...stage.querySelectorAll('iso-gram')];
   const def0 = ISOGRAM.get(IDS[0]);
-  const st = { look: new URLSearchParams(location.search).get('look') || def0.look || 'glow', theme: 'default', accent: '', frame: true, labels: true, progress: true, transparent: false, pixelSize: '' };
+  const st = { look: new URLSearchParams(location.search).get('look') || def0.look || 'glow', theme: 'default', accent: '', background: '', frame: true, labels: true, progress: true, transparent: false, pixelSize: '' };
   function apply() {
     els.forEach(el => {
       el.setAttribute('look', st.look); el.setAttribute('theme', st.theme);
       st.accent ? el.setAttribute('accent', st.accent) : el.removeAttribute('accent');
+      st.background ? el.setAttribute('background', st.background) : el.removeAttribute('background');
       st.frame ? el.removeAttribute('frame') : el.setAttribute('frame', 'none');
       st.labels ? el.removeAttribute('labels') : el.setAttribute('labels', 'none');
       st.pixelSize && st.pixelSize !== '1' ? el.setAttribute('pixel-size', st.pixelSize) : el.removeAttribute('pixel-size');
@@ -86,15 +88,18 @@
     });
     document.querySelectorAll('#looks button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === st.look));
     document.querySelectorAll('#themes button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === st.theme));
-    const T = ISOGRAM.themeOf(st.look, st.theme === 'default' ? ISOGRAM.LOOKS[st.look].default : st.theme === 'auto' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : st.theme, st.accent || def0.accent);
+    const T = ISOGRAM.themeOf(st.look, st.theme === 'default' ? ISOGRAM.LOOKS[st.look].default : st.theme === 'auto' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : st.theme, st.accent || def0.accent, st.background || def0.background);
     $('accent').value = T.accent.length === 7 ? T.accent : '#ff7a1a';
-    const attrs = [`look="${st.look}"`, st.theme !== 'auto' ? `theme="${st.theme}"` : '', st.accent ? `accent="${st.accent}"` : '', st.frame ? '' : 'frame="none"', st.labels ? '' : 'labels="none"', st.progress ? '' : 'progress="none"', st.pixelSize && st.pixelSize !== '1' && st.look === 'pixel' ? `pixel-size="${st.pixelSize}"` : '', st.transparent ? 'transparent' : ''].filter(Boolean).join(' ');
+    $('bgcol').value = st.background || T.panel;
+    const attrs = [`look="${st.look}"`, st.theme !== 'auto' ? `theme="${st.theme}"` : '', st.accent ? `accent="${st.accent}"` : '', st.background ? `background="${st.background}"` : '', st.frame ? '' : 'frame="none"', st.labels ? '' : 'labels="none"', st.progress ? '' : 'progress="none"', st.pixelSize && st.pixelSize !== '1' && st.look === 'pixel' ? `pixel-size="${st.pixelSize}"` : '', st.transparent ? 'transparent' : ''].filter(Boolean).join(' ');
     $('code').value = `<script src="${NAME}.isogram.js"><\/script>\n` + IDS.map((id, i) => `<iso-gram name="${id}" fig="${i + 1}" ${attrs}></iso-gram>`).join('\n');
   }
   Object.entries(ISOGRAM.LOOKS).forEach(([k, L]) => { const b = document.createElement('button'); b.textContent = L.label || k; b.dataset.v = k; b.onclick = () => { st.look = k; apply(); }; $('looks').appendChild(b); });
   ['default', 'auto', 'light', 'dark'].forEach(k => { const b = document.createElement('button'); b.textContent = k; b.dataset.v = k; b.onclick = () => { st.theme = k; apply(); }; $('themes').appendChild(b); });
   $('accent').oninput = e => { st.accent = e.target.value; apply(); };
   $('accReset').onclick = () => { st.accent = ''; apply(); };
+  $('bgcol').oninput = e => { st.background = e.target.value; apply(); };
+  $('bgReset').onclick = () => { st.background = ''; apply(); };
   $('frame').onchange = e => { st.frame = e.target.checked; apply(); };
   $('labels').onchange = e => { st.labels = e.target.checked; apply(); };
   $('progress').onchange = e => { st.progress = e.target.checked; apply(); };
