@@ -33,7 +33,7 @@ Then ask for one:
 | `assets/isogram.js` | The runtime: scene builder, looks, canvas + SVG renderers, GIF encoder, `<iso-gram>` |
 | `scripts/build.py` | `python3 scripts/build.py DIAGRAM.js` → preview page, `NAME.isogram.js`, self-contained embed snippet |
 | `scripts/export.mjs` | Headless PNG/GIF/SVG/step-sheet export (needs an already-installed Chromium + Playwright) |
-| `examples/` | `starter.js` (35 lines) and `pumpkin.js` (a full figure: carving a jack-o'-lantern on a crypt altar) |
+| `examples/` | `starter.js` (35 lines), `pumpkin.js` (carving a jack-o'-lantern on a crypt altar), `robot.js` (a robot assembled by claws and hatches) and `rocket.js` (build, launch, land on a new planet, unstack) |
 
 ## Design notes
 

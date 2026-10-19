@@ -78,7 +78,7 @@ World units ≈ CSS px at the default fit. +x runs down-right, +y down-left, +z 
 | `k.t`, `k.duration` | ms inside the loop |
 | `k.i`, `k.beat`, `k.u`, `k.beats` | current beat index/object, progress 0..1 through it |
 | `k.at(i or id)` / `k.since(i or id)` | beat start time / ms since it |
-| `k.ramp(t0,t1,ease=smooth)` | 0 → 1 between two times |
+| `k.ramp(t0,t1,ease=smooth)` | 0 → 1 between two times; the input is clamped, so a custom `ease` only ever sees 0..1 |
 | `k.env(t0,t1,attack=300,decay=300)` | 0 → 1 → 0 with smooth edges; use for every light |
 | `k.pulse(at,len)` | single sine bump |
 | `k.cycle(period,phase)` | repeating 0..1 sawtooth |

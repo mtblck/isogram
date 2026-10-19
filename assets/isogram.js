@@ -297,7 +297,7 @@
     const k = {
       t, i, beat: beats[i], u: (t - start) / Math.max(1, end - start), duration: def.duration, beats,
       at: atOf,                                                  // start time (ms) of a beat by index or id
-      ramp: (t0, t1, ease = smooth) => ease((t - t0) / Math.max(1, t1 - t0)),
+      ramp: (t0, t1, ease = smooth) => ease(Math.max(0, Math.min(1, (t - t0) / Math.max(1, t1 - t0)))),   // clamped, so custom easings are safe
       env: (t0, t1, a = 300, d = 300) => Math.min(smooth((t - t0) / a), 1 - smooth((t - (t1 - d)) / d)),  // attack + decay, never pops
       pulse: (at, len = 400) => { const x = (t - at) / len; return x < 0 || x > 1 ? 0 : Math.sin(Math.PI * x); },
       cycle: (period, phase = 0) => (((t + phase) % period) + period) % period / period,
