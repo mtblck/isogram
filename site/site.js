@@ -33,13 +33,13 @@
   // starts on the page's cobalt for that theme until the visitor picks a colour, and Reset goes back to it.
   var sysTheme = function () { return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light' }
   var drawnFor = function (name) { var d = window.ISOGRAM && ISOGRAM.get(name); return (d && d.theme) || sysTheme() }
-  var st = { name: 'rocket', look: 'vector', theme: drawnFor('rocket'), frame: true, labels: true, progress: true, accent: '', pixel: '' }
+  var st = { name: 'rocket', look: 'vector', theme: drawnFor('rocket'), frame: true, labels: true, progress: true, accent: '', pixel: '1' }
   function attrs() {
     var a = { name: st.name, look: st.look, theme: st.theme, accent: st.accent || ACCENT[st.theme] }
     if (!st.frame) a.frame = 'none'
     if (!st.labels) a.labels = 'none'
     if (!st.progress) a.progress = 'none'
-    if (st.look === 'pixel' && st.pixel) a['pixel-size'] = st.pixel
+    if (st.look === 'pixel' && st.pixel !== '1') a['pixel-size'] = st.pixel   // 1 is the default
     return a
   }
   function apply() {
