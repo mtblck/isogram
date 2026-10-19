@@ -95,7 +95,8 @@
             </div>
           </div>
           <div class="panel">
-            <fieldset><legend>Diagram</legend>
+            <fieldset aria-describedby="d-name"><legend>Diagram</legend>
+              <p class="desc" id="d-name">The four examples from above.</p>
               <div class="seg">
                 <label><input type="radio" name="pg-name" value="rocket" checked />Rocket</label>
                 <label><input type="radio" name="pg-name" value="robot" />Robot</label>
@@ -103,7 +104,8 @@
                 <label><input type="radio" name="pg-name" value="starter" />Request</label>
               </div>
             </fieldset>
-            <fieldset><legend>Look</legend>
+            <fieldset aria-describedby="d-look"><legend>Look</legend>
+              <p class="desc" id="d-look">How the same scene is drawn. Any diagram works in every look.</p>
               <div class="seg">
                 <label><input type="radio" name="pg-look" value="glow" />Glow</label>
                 <label><input type="radio" name="pg-look" value="vector" checked />Vector</label>
@@ -111,31 +113,34 @@
                 <label><input type="radio" name="pg-look" value="blueprint" />Blueprint</label>
               </div>
             </fieldset>
-            <fieldset><legend>Theme</legend>
+            <fieldset aria-describedby="d-theme"><legend>Theme</legend>
+              <p class="desc" id="d-theme">Starts on the theme the diagram was drawn for. Leave <code>theme</code> off your tag and it follows each visitor's system setting.</p>
               <div class="seg">
-                <label><input type="radio" name="pg-theme" value="own" checked />Its own</label>
-                <label><input type="radio" name="pg-theme" value="page" />Match the page</label>
                 <label><input type="radio" name="pg-theme" value="light" />Light</label>
-                <label><input type="radio" name="pg-theme" value="dark" />Dark</label>
+                <label><input type="radio" name="pg-theme" value="dark" checked />Dark</label>
               </div>
             </fieldset>
-            <fieldset><legend>Show</legend>
+            <fieldset aria-describedby="d-show"><legend>Show</legend>
+              <p class="desc" id="d-show">The card around the diagram, the step captions and readout, and the progress bar.</p>
               <div class="checks">
                 <label><input type="checkbox" id="pg-frame" checked />Card</label>
                 <label><input type="checkbox" id="pg-labels" checked />Captions</label>
                 <label><input type="checkbox" id="pg-progress" checked />Progress</label>
               </div>
             </fieldset>
-            <fieldset><legend>Colour</legend>
+            <fieldset aria-describedby="d-accent"><legend>Accent</legend>
+              <p class="desc" id="d-accent">The one colour for whatever is active right now: lit parts, the current step.</p>
               <div class="checks">
-                <label><input type="color" id="pg-accent" value="#2f45e6" aria-label="Accent colour" />Accent</label>
-                <label><input type="checkbox" id="pg-own" />The look's own</label>
+                <label><input type="color" id="pg-accent" value="#8e9bff" aria-label="Accent colour" />Colour</label>
+                <button class="btn small" type="button" id="pg-accent-reset" disabled>Reset</button>
               </div>
             </fieldset>
-            <fieldset id="pg-pxbox" hidden><legend>Pixel size</legend>
-              <select id="pg-pixel" aria-label="Pixel size"><option value="">Automatic</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+            <fieldset aria-describedby="d-pixel" id="pg-pxbox"><legend>Pixel size</legend>
+              <p class="desc" id="d-pixel">Pixel look only: how many screen pixels make one art pixel. Automatic keeps the art about 320 pixels across.</p>
+              <select id="pg-pixel" aria-label="Pixel size" disabled><option value="">Automatic</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
             </fieldset>
-            <fieldset><legend>Export</legend>
+            <fieldset aria-describedby="d-export"><legend>Export</legend>
+              <p class="desc" id="d-export">Files of the diagram as it's set up here. SVG is for the vector looks; GIF and WebM record one loop.</p>
               <div class="exports">
                 <button class="btn small" type="button" data-x="gif">GIF</button>
                 <button class="btn small" type="button" data-x="png">PNG</button>
@@ -152,7 +157,7 @@
     <section id="how" aria-labelledby="how-h">
       <div class="wrap">
         <div class="head">
-          <h2 id="how-h">From a sentence to a diagram</h2>
+          <h2 id="how-h">From sentence to diagram</h2>
           <p>Claude does the drawing. You describe the feature and say what to change.</p>
         </div>
         <ol class="steps">
