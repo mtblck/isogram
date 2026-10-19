@@ -31,7 +31,7 @@ World units ≈ CSS px at the default fit. +x runs down-right, +y down-left, +z 
 
 | Call | Draws | Returns |
 |---|---|---|
-| `g.box(x,y,z,w,d,h,{r,tone,lit,op,shadow,topRole})` | rounded (r) or sharp box; walls shaded by facing, rim/edges per look | handle |
+| `g.box(x,y,z,w,d,h,{r,tone,lit,op,shadow,topRole,material})` | rounded (r) or sharp box; walls shaded by facing, rim/edges per look | handle |
 | `g.cyl(cx,cy,z,r,h,{tone,lit,shadow})` | upright cylinder | handle (+ `.ring(radius,{role})` on its top) |
 | `g.cube(x,y,z,s,{…})` | small box with slightly rounded corners (tokens, packets) | handle |
 | `g.plate(x,y,z,w,d,h,{r=12,tone='lo',inset=8,screws=true})` | ground plate with inset line and four screws | handle |
@@ -67,7 +67,7 @@ World units ≈ CSS px at the default fit. +x runs down-right, +y down-left, +z 
 
 **Route:** `{ pts, len, at(u) → [x,y,z], part(u0,u1) → points, start, end }`.
 
-`op` (0..1 opacity) works on every primitive: solids, plane shapes, lines, wires and text.
+`material: 'silhouette'` on a solid paints it in a pale ink shaded by facing, for tools, hands and creatures that must read against the scene's stone tones. `op` (0..1 opacity) works on every primitive: solids, plane shapes, lines, wires and text.
 
 **Roles** (what `paint` maps to colours): `top front side edge rim` (solids), `detail detail-rect recess screw glass led wire packet packet-head term ink engrave ink-hi silhouette accent` (`silhouette` is a pale ink fill for figures against the stage: bats, birds, people). `tone`: `lo | mid | hi`. `lit`: 0..1 toward the accent.
 

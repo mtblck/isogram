@@ -161,7 +161,7 @@
     const L = []; let readout = '';
     const push = p => { L.push(p); return p; };
     const opt = o => o || {};
-    const sty = o => ({ tone: o.tone || 'mid', lit: o.lit || 0, op: o.op == null ? 1 : o.op });
+    const sty = o => ({ tone: o.tone || 'mid', lit: o.lit || 0, op: o.op == null ? 1 : o.op, material: o.material });
 
     function plane(kind, O, W, Hh) {
       const U = kind === 'top' ? [1, 0, 0] : kind === 'front' ? [1, 0, 0] : [0, -1, 0];
@@ -352,7 +352,9 @@
     switch (p.role) {
       case 'top': case 'front': case 'side': {
         const i = p.role === 'top' ? 0 : p.role === 'front' ? 1 : 2;
-        r.fill = mix(tone[i], [T.litTop, T.litFront, T.litSide][i], lit);
+        // material 'silhouette': a pale figure (tools, hands, creatures) that reads against the stage, still shaded by facing
+        const face = p.material === 'silhouette' ? (b => [mix(b, T.inkHi, 0.3), b, mix(b, T.bg, 0.3)])(mix(T.ink, T.inkHi, 0.35)) : tone;
+        r.fill = mix(face[i], [T.litTop, T.litFront, T.litSide][i], lit);
         if (L.stroke && p.edge !== false) r.stroke = mix(edge, T.accentHi, lit);
         r.glow = lit; break; }
       case 'rim': if (!L.rim) return null; r.stroke = mix(T.rim || '#ffffff', T.accentHi, lit); r.lw = 1; break;

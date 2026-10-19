@@ -10,7 +10,7 @@ ISOGRAM.define({
   still: 12900,
   beats: [
     { at: 0,     id: 'lid',    caption: 'Cut a lid around the stem',     show: 1900 },
-    { at: 2600,  id: 'scoop',  caption: 'Scoop out the seeds',           show: 4600 },
+    { at: 2600,  id: 'scoop',  caption: 'Scoop out the seeds',           show: 3900 },
     { at: 5200,  id: 'draw',   caption: 'Draw a face',                   show: 7300 },
     { at: 7800,  id: 'carve',  caption: 'Carve along the lines',         show: 9900 },
     { at: 10400, id: 'light',  caption: 'Drop in a candle and light it', show: 12900 },
@@ -24,7 +24,10 @@ ISOGRAM.define({
     const cut = k.ramp(tLid + 300, tLid + 1500);                                   // knife around the lid
     const lift = k.spring(tLid + 1600, { stiffness: 90, damping: 14 }) * (1 - k.ramp(tLight + 900, tLight + 1600, k.easeInOut));
     const scoopU = k.ramp(tScoop + 200, tScoop + 2300);
-    const seeds = Math.round(SEEDS * scoopU);
+    // one scoop: dip in, lift out heaped, swing over the altar, tip everything onto a pile
+    const ph = (a, b) => k.easeInOut((scoopU - a) / (b - a));
+    const dip = ph(0, 0.25), carry = ph(0.3, 0.72), drop = ph(0.76, 0.92);
+    const seedsOut = drop >= 1 ? SEEDS : 0;
     const drawU = k.ramp(tDraw + 200, tDraw + 2300);
     const carveU = k.ramp(tCarve + 200, tCarve + 2300);
     const candleZ = ZCUT + 50 - 80 * k.ramp(tLight + 100, tLight + 900, k.easeInOut);    // lowered through the opening
@@ -88,7 +91,7 @@ ISOGRAM.define({
       g.poly(ring(ZCUT), { role: 'recess' });
       g.poly(ring(ZCUT, -3.5), { role: 'recess', op: 0.9 });
       // seeds still inside while scooping
-      if (seeds < SEEDS) for (let s = 0; s < 6 - Math.floor(6 * seeds / SEEDS); s++) g.cube(CX - 14 + (s % 3) * 10, CY - 6 + Math.floor(s / 3) * 10, ZCUT - 3, 3.2, { tone: 'hi' });
+      if (t < tScoop || dip < 1) for (let s = 0; s < 6; s++) g.cube(CX - 14 + (s % 3) * 10, CY - 6 + Math.floor(s / 3) * 10, ZCUT - 3, 3.2, { tone: 'hi' });
     }
     if (t > tLight && candleZ > ZCUT - 30) {                                        // candle going in
       g.cyl(CX, CY, candleZ, 7, 16, { tone: 'hi' });
@@ -134,9 +137,11 @@ ISOGRAM.define({
     g.cyl(CX + 2 + lidOff[0], CY + 1 + lidOff[1], ZB + 2 * HH + 10 + lidOff[2], 3, 4, { tone: 'lo' });
 
     // ---- seeds pile up on the altar, beside a skull ----
-    for (let sd = 0; sd < Math.min(16, Math.round(16 * seeds / SEEDS)); sd++) {
-      const a = sd * 2.4, r = 2 + (sd % 5) * 3;
-      g.cube(176 + r * Math.cos(a) - 1.6, 196 + r * Math.sin(a) * 0.6 - 1.6, Z0 + (sd > 10 ? 3 : 0), 3.2, { tone: 'hi' });
+    const PILE = [176, 196], SPOON_HI = ZCUT + 34;
+    if (t > tScoop && drop > 0) for (let sd = 0; sd < 16; sd++) {
+      const a = sd * 2.4, r = 2 + (sd % 5) * 3, fall = Math.min(1, Math.max(0, drop * 1.3 - (sd % 4) * 0.08));
+      const zRest = Z0 + (sd > 10 ? 3 : 0), z = SPOON_HI + 2 + (zRest - SPOON_HI - 2) * fall * fall;
+      g.cube(PILE[0] + r * fall * Math.cos(a) - 1.6, PILE[1] + r * fall * Math.sin(a) * 0.6 - 1.6, z, 3.2, { tone: 'hi' });
     }
     g.box(209, 183, ZT, 13, 11, 5, { r: 3, tone: 'hi' });                            // jaw
     const skull = g.box(206, 176, ZT + 4, 19, 16, 15, { r: 7, tone: 'hi' });           // cranium
@@ -147,26 +152,26 @@ ISOGRAM.define({
     // ---- tools (above everything) ----
     if (t > tLid && t < tLid + 1700) {                                                // knife rides the cut
       const p = surf(cutA, ZCUT, 2);
-      g.box(p[0] - 1, p[1] - 4, ZCUT - 6, 2, 8, 18, { tone: 'hi' });
-      g.box(p[0] - 3, p[1] - 4, ZCUT + 12, 6, 8, 16, { r: 2, tone: 'lo' });
+      g.box(p[0] - 1, p[1] - 4, ZCUT - 6, 2, 8, 18, { material: 'silhouette' });
+      g.box(p[0] - 3, p[1] - 4, ZCUT + 12, 6, 8, 16, { r: 2, material: 'silhouette' });
     }
-    if (t > tScoop && t < tScoop + 2500) {                                            // spoon shuttles seeds to the pile
-      const trip = (scoopU * 4) % 1, out = Math.sin(PI * trip);
-      const x = CX + (176 - CX) * out, y = CY + (196 - CY) * out, z = ZCUT + 6 + 24 * Math.sin(PI * trip);
-      g.cyl(x, y, z, 7, 3, { tone: 'hi' });
-      g.box(x + 4, y - 2, z + 2, 30, 4, 3, { r: 1.5, tone: 'lo' });
-      if (out > 0.05 && out < 0.95) g.cube(x - 2, y - 2, z + 3, 3.2, { tone: 'hi' });
+    if (t > tScoop && t < tScoop + 2500 && drop < 1) {                                // one big scoop to the pile
+      const up = ZCUT + 10 + (SPOON_HI - ZCUT - 10) * (1 - Math.cos(PI * carry)) / 2 + (1 - dip) * 20;
+      const x = CX + (PILE[0] - CX) * carry, y = CY + (PILE[1] - CY) * carry, z = carry > 0 ? Math.max(up, ZCUT + 10 + 30 * Math.sin(PI * carry)) : ZCUT + 30 - 22 * dip;
+      g.cyl(x, y, z, 9, 4, { material: 'silhouette' });                               // bowl of the scoop
+      g.box(x + 6, y - 2, z + 2, 34, 4, 3, { r: 1.5, material: 'silhouette' });       // handle
+      if (dip >= 1 && drop <= 0) for (let sd = 0; sd < 6; sd++) g.cube(x - 5 + (sd % 3) * 3.5, y - 4 + Math.floor(sd / 3) * 4, z + 4 + (sd === 1 || sd === 4 ? 2 : 0), 3.2, { tone: 'hi' });   // heaped seeds
     }
     if (t > tDraw && t < tDraw + 2500 && drawU < 1) {                                  // marker on the face
       const fi = Math.min(FACE.length - 1, Math.floor(drawU * FACE.length)), u = drawU * FACE.length - fi;
       const pts = dense(FACE[fi]).map(([s, tt]) => at(s, tt)), p = g.route([...pts, pts[0]]).at(u);
-      g.box(p[0] - 2, p[1] + 2, p[2], 4, 4, 30, { r: 1.5, tone: 'lo' });
+      g.box(p[0] - 2, p[1] + 2, p[2], 4, 4, 30, { r: 1.5, material: 'silhouette' });
     }
     if (t > tCarve && t < tCarve + 2500 && carveU < 1) {                               // knife works the openings
       const fi = Math.min(FACE.length - 1, Math.floor(carveU * FACE.length)), u = carveU * FACE.length - fi;
       const pts = dense(FACE[fi]).map(([s, tt]) => at(s, tt, 2)), p = g.route([...pts, pts[0]]).at(u);
-      g.box(p[0] - 1, p[1] + 1, p[2] - 4, 2, 8, 18, { tone: 'hi' });
-      g.box(p[0] - 3, p[1] + 1, p[2] + 14, 6, 8, 16, { r: 2, tone: 'lo' });
+      g.box(p[0] - 1, p[1] + 1, p[2] - 4, 2, 8, 18, { material: 'silhouette' });
+      g.box(p[0] - 3, p[1] + 1, p[2] + 14, 6, 8, 16, { r: 2, material: 'silhouette' });
     }
     // carved pieces drop onto the altar in front
     FACE.forEach((_, fi) => { if (carveU * FACE.length - fi > 1) g.box(92 + fi * 13, 196, Z0, 9, 7, 3, { r: 2, tone: 'hi' }); });
@@ -183,7 +188,7 @@ ISOGRAM.define({
 
     // ---- readout from the model ----
     g.readout(t < tScoop ? (lift > 0.02 ? 'lid off · ' + Math.round(2 * rAt(ZCUT) / 4) + ' cm across' : 'cutting · ' + Math.round(cut * 100) + '%')
-      : t < tDraw ? 'seeds · ' + seeds + ' / ' + SEEDS
+      : t < tDraw ? (seedsOut ? 'seeds · ' + SEEDS + ' out' : dip < 1 ? 'scooping…' : 'lifting · ' + SEEDS + ' seeds')
       : t < tCarve ? 'face · ' + Math.min(FACE.length, Math.floor(drawU * FACE.length + 0.001)) + ' / ' + FACE.length + ' drawn'
       : t < tLight ? 'carved · ' + Math.min(FACE.length, Math.floor(carveU * FACE.length + 0.001)) + ' / ' + FACE.length
       : flame > 0.05 ? 'lit · candle burning' : 'candle going in');
