@@ -116,7 +116,10 @@ section { padding: clamp(40px, 7vw, 88px) 0; }
 @media (max-width: 900px) { .playground { grid-template-columns: minmax(0, 1fr); } }
 .panel { background: var(--card); border: 1px solid var(--rule); border-radius: 14px; padding: 18px; display: grid; gap: 18px; }
 .panel fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
-.panel legend { font-weight: 650; font-size: 0.92rem; margin-bottom: 6px; }
+.panel legend { font-weight: 650; font-size: 0.92rem; padding: 0; }
+.panel .desc { margin: -4px 0 4px; font-size: 0.85rem; line-height: 1.45; color: var(--ink-2); }
+.panel fieldset:has(select:disabled) .desc { color: var(--ink-2); }
+select:disabled { opacity: 0.5; cursor: not-allowed; }
 .seg { display: flex; flex-wrap: wrap; gap: 6px; }
 .seg label { position: relative; border: 1px solid var(--rule); border-radius: 8px; padding: 6px 10px; font-size: 0.92rem; cursor: pointer; }
 .seg input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
@@ -183,3 +186,4 @@ footer p { margin: 0 0 8px; max-width: 60em; }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
 .prose :not(pre) > code { overflow-wrap: anywhere; }
 @media (max-width: 720px) { .top nav { display: flex; gap: 14px; } .top nav a:nth-child(-n+3) { display: none; } .theme { margin-left: 0; } }
+.panel select { justify-self: start; min-width: 10em; }
