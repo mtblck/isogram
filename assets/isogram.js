@@ -369,6 +369,7 @@
       case 'term': r.fill = mix(T.term, T.accent, lit); r.glow = lit; break;
       case 'ink': r.fill = mix(T.label || T.ink, T.accentHi, lit); r.glow = lit * 0.5; break;
       case 'engrave': r.fill = mix(T.label || T.ink, T.engraveLit, lit); break;   // label on a part that lights up
+      case 'silhouette': r.fill = mix(T.ink, T.inkHi, 0.35); break;   // a figure against the stage: bats, birds, people
       case 'ink-hi': r.fill = mix(T.inkHi, T.accentHi, lit); break;
       case 'accent': r.fill = T.accent; r.glow = 1; break;
       default: r.fill = tone[0];
@@ -736,7 +737,12 @@
       this._start();
     }
     disconnectedCallback() { cancelAnimationFrame(this._raf); this._raf = 0; }
-    attributeChangedCallback() { if (!this._root || !this._def) return; this._applyTheme(); this._applyFrame(); this._resize(); }
+    attributeChangedCallback(attr, was, now) {
+      if (!this._root || !this._def) return;
+      // a new name is a different diagram: load it from the start (captions, steps, aspect, time)
+      if (attr === 'name' && was !== now) { this._t = 0; this._capHtml = this._read = null; this._start(); return; }
+      this._applyTheme(); this._applyFrame(); this._resize();
+    }
     _start() {
       const name = this.getAttribute('name') || (DEFS.size ? [...DEFS.keys()][DEFS.size - 1] : '');
       whenDefined(name, def => {

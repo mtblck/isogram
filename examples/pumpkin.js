@@ -125,7 +125,10 @@ ISOGRAM.define({
     // ---- lid with stem (lifted, set down beside, then back on) ----
     const lidOff = [-60 * lift, 44 * lift, (26 + 4 * Math.sin(t / 420)) * lift];   // the lid floats beside, bobbing
     // the cut seam: bright while the knife makes it, then dark, then leaking candlelight once the lid is back on
-    if (cut > 0 && lift < 0.02) g.line(ring(ZCUT, 0.8).filter(p => facing(Math.atan2(p[1] - CY, p[0] - CX)) > -0.1).slice(0, Math.max(2, Math.round(40 * cut))), { role: 'detail', w: 1.4, lit: t < tScoop ? 1 - cut * 0.5 : flame * 0.7 });
+    // knife and seam share one angle, so the blade is always at the end of the cut
+    const CUT0 = PI / 4 - 1.6, CUT1 = PI / 4 + 1.6, cutA = CUT0 + (CUT1 - CUT0) * cut;
+    const seam = to => Array.from({ length: 33 }, (_, j) => surf(CUT0 + (to - CUT0) * j / 32, ZCUT, 0.8));
+    if (cut > 0 && lift < 0.02) g.line(seam(cutA), { role: 'detail', w: 1.4, lit: t < tScoop ? 1 - cut * 0.5 : flame * 0.7 });
     lobes(ZCUT, ZB + 2 * HH, lidOff, null).forEach(L => g.poly(L.pts, { role: L.role, tone: L.tone }));
     g.cyl(CX + lidOff[0], CY + lidOff[1], ZB + 2 * HH - 4 + lidOff[2], 6, 14, { tone: 'lo' });   // stem
     g.cyl(CX + 2 + lidOff[0], CY + 1 + lidOff[1], ZB + 2 * HH + 10 + lidOff[2], 3, 4, { tone: 'lo' });
@@ -143,7 +146,7 @@ ISOGRAM.define({
 
     // ---- tools (above everything) ----
     if (t > tLid && t < tLid + 1700) {                                                // knife rides the cut
-      const a = PI / 4 + (cut - 0.5) * 2.4, p = surf(a, ZCUT, 2);
+      const p = surf(cutA, ZCUT, 2);
       g.box(p[0] - 1, p[1] - 4, ZCUT - 6, 2, 8, 18, { tone: 'hi' });
       g.box(p[0] - 3, p[1] - 4, ZCUT + 12, 6, 8, 16, { r: 2, tone: 'lo' });
     }
@@ -175,7 +178,7 @@ ISOGRAM.define({
       const U = [0.707, -0.707, 0], V = [0, 0, -1];
       const P = (u, v) => [c[0] + (U[0] * u + V[0] * v) * S, c[1] + (U[1] * u + V[1] * v) * S, c[2] + (U[2] * u + V[2] * v) * S];
       const tip = -5 * flap;
-      g.poly([[-16, tip], [-11, tip - 1], [-8, 1], [-5, -1], [-2, -3], [0, -1], [2, -3], [5, -1], [8, 1], [11, tip - 1], [16, tip], [10, 3], [5, 2], [0, 5], [-5, 2], [-10, 3]].map(([u, v]) => P(u, v)), { role: 'front', tone: 'lo' });
+      g.poly([[-16, tip], [-11, tip - 1], [-8, 1], [-5, -1], [-2, -3], [0, -1], [2, -3], [5, -1], [8, 1], [11, tip - 1], [16, tip], [10, 3], [5, 2], [0, 5], [-5, 2], [-10, 3]].map(([u, v]) => P(u, v)), { role: 'silhouette' });
     }
 
     // ---- readout from the model ----

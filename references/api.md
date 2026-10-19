@@ -69,7 +69,7 @@ World units ≈ CSS px at the default fit. +x runs down-right, +y down-left, +z 
 
 `op` (0..1 opacity) works on every primitive: solids, plane shapes, lines, wires and text.
 
-**Roles** (what `paint` maps to colours): `top front side edge rim` (solids), `detail detail-rect recess screw glass led wire packet packet-head term ink engrave ink-hi accent`. `tone`: `lo | mid | hi`. `lit`: 0..1 toward the accent.
+**Roles** (what `paint` maps to colours): `top front side edge rim` (solids), `detail detail-rect recess screw glass led wire packet packet-head term ink engrave ink-hi silhouette accent` (`silhouette` is a pale ink fill for figures against the stage: bats, birds, people). `tone`: `lo | mid | hi`. `lit`: 0..1 toward the accent.
 
 ## Timeline `k`
 
