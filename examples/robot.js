@@ -67,14 +67,17 @@ ISOGRAM.define({
       const carX = armX + 5 + (home - (armX + 5)) * back;                               // rides with the arm, then returns
       const r0 = side < 0 ? px + 18 : carX + 7, r1 = side < 0 ? carX - 7 : px;
       g.box(Math.min(r0, r1), 116, 146, Math.max(1, Math.abs(r1 - r0)), 8, 6, { r: 1, tone: 'mid' });   // rail boom out of the pillar
-      g.box(carX - 7, 112, 136, 14, 16, 10, { r: 2, material: 'silhouette' });                       // carriage
-      // the claw: a wrist under the carriage, a bar across the top of the arm, and two fingers down its
-      // sides. Closed, they sit just outside the arm's faces (y 112..128); opening swings them out and up.
-      const open = 1 - grip, fz = 104 + 8 * open;
-      g.box(carX - 2, 118, 130, 4, 4, 6, { material: 'silhouette' });                                  // wrist
-      g.box(carX - 4, 108 - 3 * open, 128 + 2 * open, 8, 24 + 6 * open, 3, { r: 1, material: 'silhouette' });   // bar
-      g.box(carX - 3, 108 - 3 * open, fz, 6, 3, 131 - fz, { material: 'silhouette' });               // back finger (behind the arm)
-      const front = () => g.box(carX - 3, 129 + 3 * open, fz, 6, 3, 131 - fz, { material: 'silhouette' });   // front finger (in front)
+      // the claw: two fingers down the arm's sides, a bar across its top, a wrist up to the carriage.
+      // Closed, the fingers sit just outside the arm's faces (y 112..128); opening swings them out and up.
+      // Painter's order: back finger, then (the arm), then front finger, bar, wrist and carriage on top.
+      const open = 1 - grip, fz = 104 + 8 * open, bz = 128 + 2 * open, S = { material: 'silhouette' };
+      g.box(carX - 3, 108 - 3 * open, fz, 6, 3, bz - fz, S);                                          // back finger
+      const front = () => {
+        g.box(carX - 3, 129 + 3 * open, fz, 6, 3, bz - fz, S);                                        // front finger
+        g.box(carX - 4, 108 - 3 * open, bz, 8, 24 + 6 * open, 3, { r: 1, ...S });                    // bar across the top
+        g.box(carX - 2, 118, bz + 3, 4, 4, 136 - bz - 3, S);                                          // wrist
+        g.box(carX - 7, 112, 136, 14, 16, 10, { r: 2, ...S });                                       // carriage
+      };
       return { armX, front };
     };
     const arm = (x, side) => {
