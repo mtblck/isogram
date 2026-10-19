@@ -1,10 +1,11 @@
-/* Jack-o'-lantern: cut the lid, scoop the seeds, draw a face, carve it, light a candle.
+/* Jack-o'-lantern on a crypt altar: cut the lid, scoop the seeds, draw a face, carve it, light a candle.
    The pumpkin is built from lobes (patches between meridians) so its ribs read in every look;
    the face is drawn in surface coordinates (s across, t up) and wrapped onto the front lobes. */
 ISOGRAM.define({
   id: 'pumpkin',
   title: "Carving a jack-o'-lantern",
-  aria: "Isometric diagram of carving a jack-o'-lantern: a lid is cut around the stem, the seeds are scooped into a bowl, a face is drawn and carved out, and a candle inside lights the face.",
+  aria: "Isometric diagram of carving a jack-o'-lantern: a lid is cut around the stem, the seeds are scooped out onto a stone altar, a face is drawn and carved, and a candle inside lights the face while the altar candles flare and bats circle overhead.",
+  theme: 'dark',     // a night scene: the light themes lose the mood
   duration: 14000,
   still: 12900,
   beats: [
@@ -17,7 +18,7 @@ ISOGRAM.define({
   draw(g, k) {
     const t = k.t, PI = Math.PI;
     // ---- model ----
-    const CX = 118, CY = 100, ZB = 14, R = 60, HH = 46, ZC = ZB + HH, ZCUT = 92, SEEDS = 48;
+    const ZT = 75, CX = 140, CY = 122, ZB = ZT, R = 56, HH = 42, ZC = ZB + HH, ZCUT = ZB + 2 * HH - 13, SEEDS = 48;
     const rAt = z => R * Math.sqrt(Math.max(0, 1 - ((z - ZC) / HH) ** 2));
     const tLid = k.at('lid'), tScoop = k.at('scoop'), tDraw = k.at('draw'), tCarve = k.at('carve'), tLight = k.at('light');
     const cut = k.ramp(tLid + 300, tLid + 1500);                                   // knife around the lid
@@ -26,14 +27,44 @@ ISOGRAM.define({
     const seeds = Math.round(SEEDS * scoopU);
     const drawU = k.ramp(tDraw + 200, tDraw + 2300);
     const carveU = k.ramp(tCarve + 200, tCarve + 2300);
-    const candleZ = 150 - 88 * k.ramp(tLight + 100, tLight + 900, k.easeInOut);    // lowered through the opening
+    const candleZ = ZCUT + 50 - 80 * k.ramp(tLight + 100, tLight + 900, k.easeInOut);    // lowered through the opening
     const flame = k.env(tLight + 1200, k.duration - 60, 400, 500) * (0.88 + 0.12 * Math.sin(t / 70) * Math.sin(t / 113));
+    const altarFlame = k.env(tLight + 1700, k.duration - 60, 300, 500);            // the altar candles flare after the pumpkin
 
-    // ---- board ----
-    g.plate(0, 0, 0, 240, 214, 8, { r: 14, inset: 6 });
-    const board = g.box(16, 14, 8, 208, 184, 6, { r: 10, tone: 'mid' });
-    board.top.slits(14, 194, 20, 10, 174, true, { op: 0.6 });                     // grain
-    const Z0 = 14;
+    // ---- crypt floor and gravestones (behind the altar, at the left and right) ----
+    const floor = g.box(0, 0, 0, 270, 250, 8, { r: 6, tone: 'lo' });
+    floor.top.slits(30, 240, 30, 4, 246, true, { op: 0.7 }).slits(30, 220, 30, 4, 266, false, { op: 0.7 });
+    const stoneR = g.box(196, 4, 8, 40, 9, 96, { r: 3, tone: 'mid' });
+    stoneR.front.recess(6, 8, 28, 30, { r: 3 }).text(20, 30, 'RIP', { size: 11, align: 'center' }).slits(8, 32, 4, 50, 80, true, { op: 0.6 });
+    const stoneL = g.box(4, 82, 8, 9, 40, 84, { r: 3, tone: 'mid' });
+    stoneL.side.recess(6, 8, 28, 26, { r: 3 }).text(20, 27, '1897', { size: 8, align: 'center' });
+
+    // ---- the altar: two steps, a carved body, an overhanging slab ----
+    g.box(26, 30, 8, 230, 196, 8, { r: 3, tone: 'lo', shadow: true });
+    g.box(36, 40, 16, 210, 176, 8, { r: 3, tone: 'lo' });
+    const altar = g.box(50, 54, 24, 182, 148, 44, { r: 2, tone: 'mid' });
+    altar.front.recess(10, 8, 162, 28, { r: 3 }).text(81, 26, 'MEMENTO MORI', { size: 9, align: 'center' });
+    altar.side.recess(10, 8, 128, 28, { r: 3 }).slits(18, 130, 8, 12, 32, true, { op: 0.6 });
+    const slab = g.box(42, 46, 68, 198, 164, 7, { r: 3, tone: 'lo' });
+    slab.top.rect(6, 6, 186, 152, { r: 3, role: 'detail-rect' });
+    const Z0 = ZT;
+
+    // pillar candles on the altar's left and right corners, wax running down
+    const pillar = (x, y, h, lit) => {
+      g.cyl(x, y, ZT, 8, 3, { tone: 'mid' });
+      const c = g.cyl(x, y, ZT + 3, 6, h, { tone: 'hi' });
+      g.cyl(x + 3, y + 4, ZT + 3 + h - 9, 2, 9, { tone: 'hi' });                    // a drip
+      g.line([[x, y, ZT + 3 + h], [x, y, ZT + 7 + h]], { role: 'detail', w: 1.4 });
+      if (lit > 0.02) {
+        const f = lit * (0.9 + 0.1 * Math.sin(t / 53 + x));
+        const pl = g.front(x - 4, y, ZT + 18 + h);
+        g.poly([[0, 0], [3.2, 7], [4, 11], [2, 14], [0, 13], [-2, 14], [-4, 11], [-3.2, 7]].map(([a, b]) => [x + a * 0.7 + b * 0, y - a * 0.7, ZT + 6 + h + b * f]), { role: 'led', lit: f });
+        g.bloom([x, y, ZT + 13 + h], 34, f);
+      }
+      return c;
+    };
+    pillar(60, 194, 30, altarFlame);
+    pillar(224, 62, 40, altarFlame);
 
     // ---- pumpkin surface helpers ----
     const N = 14, lobeA = i => -PI / 4 + (i / N) * 2 * PI;
@@ -92,22 +123,23 @@ ISOGRAM.define({
     if (lightUp > 0) g.bloom(at(0, 0, 6), 70, lightUp);
 
     // ---- lid with stem (lifted, set down beside, then back on) ----
-    const off = [-72 * lift, 60 * lift, 22 * Math.sin(PI * Math.min(1, lift)) - (ZCUT - Z0) * lift * 0];
-    const lidDrop = lift > 0.5 ? (ZCUT - Z0 - 2) * (lift - 0.5) * 2 : 0;          // comes to rest on the board
-    const lidOff = [off[0], off[1], off[2] - lidDrop];
+    const lidOff = [-60 * lift, 44 * lift, (26 + 4 * Math.sin(t / 420)) * lift];   // the lid floats beside, bobbing
     // the cut seam: bright while the knife makes it, then dark, then leaking candlelight once the lid is back on
     if (cut > 0 && lift < 0.02) g.line(ring(ZCUT, 0.8).filter(p => facing(Math.atan2(p[1] - CY, p[0] - CX)) > -0.1).slice(0, Math.max(2, Math.round(40 * cut))), { role: 'detail', w: 1.4, lit: t < tScoop ? 1 - cut * 0.5 : flame * 0.7 });
     lobes(ZCUT, ZB + 2 * HH, lidOff, null).forEach(L => g.poly(L.pts, { role: L.role, tone: L.tone }));
     g.cyl(CX + lidOff[0], CY + lidOff[1], ZB + 2 * HH - 4 + lidOff[2], 6, 14, { tone: 'lo' });   // stem
     g.cyl(CX + 2 + lidOff[0], CY + 1 + lidOff[1], ZB + 2 * HH + 10 + lidOff[2], 3, 4, { tone: 'lo' });
 
-    // ---- seed bowl (front right) ----
-    const bowl = g.cyl(190, 158, Z0, 22, 14, { tone: 'mid', shadow: true });
-    bowl.ring(17, { role: 'recess' });
-    for (let s = 0; s < Math.min(14, Math.round(14 * seeds / SEEDS)); s++) {
-      const a = s * 2.4, r = 5 + (s % 4) * 3.2;
-      g.cube(190 + r * Math.cos(a) - 1.6, 158 + r * Math.sin(a) - 1.6, Z0 + 14, 3.2, { tone: 'hi' });
+    // ---- seeds pile up on the altar, beside a skull ----
+    for (let sd = 0; sd < Math.min(16, Math.round(16 * seeds / SEEDS)); sd++) {
+      const a = sd * 2.4, r = 2 + (sd % 5) * 3;
+      g.cube(176 + r * Math.cos(a) - 1.6, 196 + r * Math.sin(a) * 0.6 - 1.6, Z0 + (sd > 10 ? 3 : 0), 3.2, { tone: 'hi' });
     }
+    g.box(209, 183, ZT, 13, 11, 5, { r: 3, tone: 'hi' });                            // jaw
+    const skull = g.box(206, 176, ZT + 4, 19, 16, 15, { r: 7, tone: 'hi' });           // cranium
+    skull.front.circle(5.5, 7, 3).circle(13.5, 7, 3);
+    skull.front.circle(9.5, 11.5, 1.2);
+    g.front(209, 194, ZT + 5, 13, 5).slits(2, 11, 2.2, 0, 4);                         // teeth on the jaw
 
     // ---- tools (above everything) ----
     if (t > tLid && t < tLid + 1700) {                                                // knife rides the cut
@@ -115,9 +147,9 @@ ISOGRAM.define({
       g.box(p[0] - 1, p[1] - 4, ZCUT - 6, 2, 8, 18, { tone: 'hi' });
       g.box(p[0] - 3, p[1] - 4, ZCUT + 12, 6, 8, 16, { r: 2, tone: 'lo' });
     }
-    if (t > tScoop && t < tScoop + 2500) {                                            // spoon shuttles seeds to the bowl
+    if (t > tScoop && t < tScoop + 2500) {                                            // spoon shuttles seeds to the pile
       const trip = (scoopU * 4) % 1, out = Math.sin(PI * trip);
-      const x = CX + (190 - CX) * out, y = CY + (158 - CY) * out, z = ZCUT + 6 + 24 * Math.sin(PI * trip);
+      const x = CX + (176 - CX) * out, y = CY + (196 - CY) * out, z = ZCUT + 6 + 24 * Math.sin(PI * trip);
       g.cyl(x, y, z, 7, 3, { tone: 'hi' });
       g.box(x + 4, y - 2, z + 2, 30, 4, 3, { r: 1.5, tone: 'lo' });
       if (out > 0.05 && out < 0.95) g.cube(x - 2, y - 2, z + 3, 3.2, { tone: 'hi' });
@@ -133,8 +165,18 @@ ISOGRAM.define({
       g.box(p[0] - 1, p[1] + 1, p[2] - 4, 2, 8, 18, { tone: 'hi' });
       g.box(p[0] - 3, p[1] + 1, p[2] + 14, 6, 8, 16, { r: 2, tone: 'lo' });
     }
-    // carved pieces land on the board in front
-    FACE.forEach((_, fi) => { if (carveU * FACE.length - fi > 1) g.box(62 + fi * 15, 178, Z0, 10, 8, 3, { r: 2, tone: 'hi' }); });
+    // carved pieces drop onto the altar in front
+    FACE.forEach((_, fi) => { if (carveU * FACE.length - fi > 1) g.box(92 + fi * 13, 196, Z0, 9, 7, 3, { r: 2, tone: 'hi' }); });
+
+    // ---- bats circling overhead ----
+    for (let b = 0; b < 3; b++) {
+      const a = t / 2600 + b * 2.1, flap = Math.sin(t / 90 + b * 1.7);
+      const c = [CX + 84 * Math.cos(a), CY + 70 * Math.sin(a), 188 + 12 * Math.sin(a * 2 + b)], S = 0.9 + 0.15 * b;
+      const U = [0.707, -0.707, 0], V = [0, 0, -1];
+      const P = (u, v) => [c[0] + (U[0] * u + V[0] * v) * S, c[1] + (U[1] * u + V[1] * v) * S, c[2] + (U[2] * u + V[2] * v) * S];
+      const tip = -5 * flap;
+      g.poly([[-16, tip], [-11, tip - 1], [-8, 1], [-5, -1], [-2, -3], [0, -1], [2, -3], [5, -1], [8, 1], [11, tip - 1], [16, tip], [10, 3], [5, 2], [0, 5], [-5, 2], [-10, 3]].map(([u, v]) => P(u, v)), { role: 'front', tone: 'lo' });
+    }
 
     // ---- readout from the model ----
     g.readout(t < tScoop ? (lift > 0.02 ? 'lid off · ' + Math.round(2 * rAt(ZCUT) / 4) + ' cm across' : 'cutting · ' + Math.round(cut * 100) + '%')

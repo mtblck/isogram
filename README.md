@@ -1,6 +1,6 @@
 # isogram
 
-A [Claude](https://claude.ai) skill for animated isometric diagrams that explain how a feature works. You describe the feature; Claude invents a small machine whose motion *is* the explanation (a pumpkin whose carved face lights up when the candle goes in, a server that answers a request), and hands it back as a drop-in web component, a GIF, a PNG or an SVG.
+A [Claude](https://claude.ai) skill for animated isometric diagrams that explain how a feature works. You describe the feature; Claude invents a small machine whose motion *is* the explanation (a jack-o'-lantern on a crypt altar whose carved face lights up when the candle goes in, a server that answers a request), and hands it back as a drop-in web component, a GIF, a PNG or an SVG.
 
 **Live demo:** [mattblack.space/skills/isogram](https://mattblack.space/skills/isogram/)
 
@@ -33,7 +33,7 @@ Then ask for one:
 | `assets/isogram.js` | The runtime: scene builder, looks, canvas + SVG renderers, GIF encoder, `<iso-gram>` |
 | `scripts/build.py` | `python3 scripts/build.py DIAGRAM.js` → preview page, `NAME.isogram.js`, self-contained embed snippet |
 | `scripts/export.mjs` | Headless PNG/GIF/SVG/step-sheet export (needs an already-installed Chromium + Playwright) |
-| `examples/` | `starter.js` (35 lines) and `pumpkin.js` (a full figure: carving a jack-o'-lantern) |
+| `examples/` | `starter.js` (35 lines) and `pumpkin.js` (a full figure: carving a jack-o'-lantern on a crypt altar) |
 
 ## Design notes
 
