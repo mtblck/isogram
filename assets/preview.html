@@ -41,7 +41,7 @@
     <div class="grp" id="looks"><span>Look</span></div>
     <div class="grp" id="themes"><span>Theme</span></div>
     <div class="grp"><span>Accent</span><input type="color" id="accent" aria-label="Accent colour"><button id="accReset">reset</button></div>
-    <div class="grp"><label class="chk"><input type="checkbox" id="frame" checked> frame</label><label class="chk"><input type="checkbox" id="labels" checked> text</label><label class="chk"><input type="checkbox" id="progress" checked> progress bar</label><label class="chk"><input type="checkbox" id="transparent"> transparent</label><label class="chk">pixel size <select id="pxsize" aria-label="Pixel size"><option value="">auto</option><option>1</option><option>2</option><option>3</option><option>4</option></select></label><label class="chk"><input type="checkbox" id="lightpage"> light page</label></div>
+    <div class="grp"><label class="chk"><input type="checkbox" id="frame" checked> frame</label><label class="chk"><input type="checkbox" id="labels" checked> text</label><label class="chk"><input type="checkbox" id="progress" checked> progress bar</label><label class="chk"><input type="checkbox" id="transparent"> transparent</label><label class="chk">pixel size <select id="pxsize" aria-label="Pixel size"><option selected>1</option><option>2</option><option>3</option><option>4</option></select></label><label class="chk"><input type="checkbox" id="lightpage"> light page</label></div>
   </div>
   <div class="stage" id="stage"></div>
   <div class="bar">
@@ -80,7 +80,7 @@
       st.accent ? el.setAttribute('accent', st.accent) : el.removeAttribute('accent');
       st.frame ? el.removeAttribute('frame') : el.setAttribute('frame', 'none');
       st.labels ? el.removeAttribute('labels') : el.setAttribute('labels', 'none');
-      st.pixelSize ? el.setAttribute('pixel-size', st.pixelSize) : el.removeAttribute('pixel-size');
+      st.pixelSize && st.pixelSize !== '1' ? el.setAttribute('pixel-size', st.pixelSize) : el.removeAttribute('pixel-size');
       st.progress ? el.removeAttribute('progress') : el.setAttribute('progress', 'none');
       st.transparent ? el.setAttribute('transparent', '') : el.removeAttribute('transparent');
     });
@@ -88,7 +88,7 @@
     document.querySelectorAll('#themes button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === st.theme));
     const T = ISOGRAM.themeOf(st.look, st.theme === 'default' ? ISOGRAM.LOOKS[st.look].default : st.theme === 'auto' ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : st.theme, st.accent || def0.accent);
     $('accent').value = T.accent.length === 7 ? T.accent : '#ff7a1a';
-    const attrs = [`look="${st.look}"`, st.theme !== 'auto' ? `theme="${st.theme}"` : '', st.accent ? `accent="${st.accent}"` : '', st.frame ? '' : 'frame="none"', st.labels ? '' : 'labels="none"', st.progress ? '' : 'progress="none"', st.pixelSize && st.look === 'pixel' ? `pixel-size="${st.pixelSize}"` : '', st.transparent ? 'transparent' : ''].filter(Boolean).join(' ');
+    const attrs = [`look="${st.look}"`, st.theme !== 'auto' ? `theme="${st.theme}"` : '', st.accent ? `accent="${st.accent}"` : '', st.frame ? '' : 'frame="none"', st.labels ? '' : 'labels="none"', st.progress ? '' : 'progress="none"', st.pixelSize && st.pixelSize !== '1' && st.look === 'pixel' ? `pixel-size="${st.pixelSize}"` : '', st.transparent ? 'transparent' : ''].filter(Boolean).join(' ');
     $('code').value = `<script src="${NAME}.isogram.js"><\/script>\n` + IDS.map((id, i) => `<iso-gram name="${id}" fig="${i + 1}" ${attrs}></iso-gram>`).join('\n');
   }
   Object.entries(ISOGRAM.LOOKS).forEach(([k, L]) => { const b = document.createElement('button'); b.textContent = L.label || k; b.dataset.v = k; b.onclick = () => { st.look = k; apply(); }; $('looks').appendChild(b); });

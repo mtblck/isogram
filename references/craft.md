@@ -68,7 +68,7 @@ Words stay out of the drawing except short engraved labels (one or two words, �
 
 - **glow:** dark first. Hairlines carry the shape, so give faces slits, insets and screws. The light theme has no glow at all; lit parts are flat accent.
 - **vector:** no outlines, so separation comes from tone (top light, front mid, side dark) and the top rim. Neighbouring parts in the same tone need a gap, a plinth or a different tone. Soft shadows ground objects; use `shadow: true` on anything standing on the plate.
-- **pixel:** 2:1 projection, ~320 art pixels wide by default (`pixel-size` changes it: 1 for fine pixel art, 2–3 for chunky). Labels on faces follow the face's 2:1 slant in a 3×5 font when the whole word fits; otherwise they become greeked marks, the pixel-art way of showing small print. For readable on-object labels use `pixel-size="1"` and short words (≤ 6 characters); at chunky sizes treat labels as texture and let the captions carry the words. Thin details under ~1.5 units vanish; make vents and keys a little chunkier. Light is dithered, not blurred.
+- **pixel:** 2:1 projection, one art pixel per CSS pixel by default (`pixel-size` 2–3 for chunkier art). Labels on faces follow the face's 2:1 slant in a 3×5 font when the whole word fits; otherwise they become greeked marks, the pixel-art way of showing small print. For readable on-object labels use `pixel-size="1"` and short words (≤ 6 characters); at chunky sizes treat labels as texture and let the captions carry the words. Thin details under ~1.5 units vanish; make vents and keys a little chunkier. Light is dithered, not blurred.
 - **blueprint:** like glow without glow; good for docs. Solids are filled in the paper colour so hidden lines stay hidden.
 
 ## 8. Composition

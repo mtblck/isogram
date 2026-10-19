@@ -669,7 +669,7 @@
     const ctx = cv.getContext('2d', { willReadFrequently: true }); ctx.setTransform(1, 0, 0, 1, 0, 0);
     const st = opts._stage && opts._stage.width === M.stageW ? opts._stage : Object.assign(document.createElement('canvas'), { width: M.stageW, height: M.stageH });
     opts._stage = st; const sx = st.getContext('2d');
-    if (L.pixel) opts.pixelFactor = opts.pixelSize ? Math.max(1, Math.round(opts.pixelSize)) : Math.max(1, Math.round(M.stageW / (L.pixel.width || 320)));
+    if (L.pixel) opts.pixelFactor = Math.max(1, Math.round(opts.pixelSize || 1));   // export px per art pixel; 1 unless asked
     const sc = renderStage(sx, def, t, Object.assign(opts, { unit: M.W / 800 * 1.25, clear: true }));
     if (opts.frame !== false) drawCard(ctx, M, def, sc, opts);
     ctx.imageSmoothingEnabled = !L.pixel; ctx.drawImage(st, M.stageX, M.stageY);
@@ -808,8 +808,8 @@
       if (!this._def || !this._el.cv.width) return;
       const L = LOOKS[this.look], o = this._opts;
       o.unit = this._dpr || 1; o.clear = true;
-      const ps = parseFloat(this.getAttribute('pixel-size'));   // CSS px per art pixel; absent: about 320 art pixels across
-      if (L.pixel) o.pixelFactor = ps > 0 ? Math.max(1, Math.round(ps * (this._dpr || 1))) : Math.max(1, Math.round(this._el.cv.width / (L.pixel.width || 320)));
+      const ps = parseFloat(this.getAttribute('pixel-size')) > 0 ? parseFloat(this.getAttribute('pixel-size')) : 1;   // CSS px per art pixel, 1 by default
+      if (L.pixel) o.pixelFactor = Math.max(1, Math.round(ps * (this._dpr || 1)));
       const sc = renderStage(this._ctx, this._def, this._t, o);
       const e = this._el, b = sc.k.beat, cap = b.caption || this._def.hint || '', nb = this._def.beats.length;
       const capHtml = (nb > 1 ? `<b>${String(sc.k.i + 1).padStart(2, '0')}</b>` : '') + String(cap).replace(/</g, '&lt;');
@@ -854,7 +854,7 @@
     /* ---- exports ---- */
     _xopts(o) { o = o || {}; const look = o.look || this.look; const T = themeOf(look, o.theme || (o.look ? LOOKS[look].default : this.theme), o.accent || this.getAttribute('accent') || this._def.accent);
       return { look, T, width: o.width || 800, frame: o.frame == null ? this.getAttribute('frame') !== 'none' : o.frame,
-        labels: o.labels == null ? this.getAttribute('labels') !== 'none' : o.labels, pixelSize: o.pixelSize || parseFloat(this.getAttribute('pixel-size')) || 0, progress: o.progress == null ? this.getAttribute('progress') !== 'none' : o.progress, transparent: !!o.transparent, fig: this.getAttribute('fig') || 1 }; }
+        labels: o.labels == null ? this.getAttribute('labels') !== 'none' : o.labels, pixelSize: o.pixelSize || parseFloat(this.getAttribute('pixel-size')) || 1, progress: o.progress == null ? this.getAttribute('progress') !== 'none' : o.progress, transparent: !!o.transparent, fig: this.getAttribute('fig') || 1 }; }
     // Stills default to the frame on screen; o.t takes a time in ms, or 'still' for the diagram's chosen frame.
     _frameT(o) { return o.t == null ? this._t : o.t === 'still' ? this._def.still : +o.t; }
     toCanvas(o = {}) { const x = this._xopts(o); return renderExport(this._def, this._frameT(o), x).canvas; }
