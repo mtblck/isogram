@@ -30,7 +30,9 @@ ISOGRAM.define({
     const holo = (1 - mat) * 0.9;                                                      // accent while it is still a hologram
     const headU = k.ramp(tHead + 150, tHead + 2100, k.easeInOut), screw = k.ramp(tHead + 2100, tHead + 2600);
     const armU = k.ramp(tArms + 150, tArms + 1500, k.easeInOut), armUL = k.ramp(tArms + 350, tArms + 1700, k.easeInOut);
-    const grip = 1 - k.ramp(tArms + 1800, tArms + 2050), back = k.ramp(tArms + 2050, tArms + 2550, k.easeInOut);
+    const grip = 1 - k.ramp(tArms + 1800, tArms + 2050);
+    // carriages slide out to the waiting arms at the loop start, carry them in, let go and return home
+    const back = t < tArms ? 1 - k.ramp(0, 700, k.easeInOut) : k.ramp(tArms + 2050, tArms + 2550, k.easeInOut);
     const hatch = k.env(tLegs + 50, D - 200, 450, 600);
     const rise = k.ramp(tLegs + 450, tLegs + 2200, k.easeInOut);
     const power = k.env(tOn + 200, D - 1000, 400, 300);
@@ -66,21 +68,26 @@ ISOGRAM.define({
       const r0 = side < 0 ? px + 18 : carX + 7, r1 = side < 0 ? carX - 7 : px;
       g.box(Math.min(r0, r1), 116, 146, Math.max(1, Math.abs(r1 - r0)), 8, 6, { r: 1, tone: 'mid' });   // rail boom out of the pillar
       g.box(carX - 7, 112, 136, 14, 16, 10, { r: 2, material: 'silhouette' });                       // carriage
-      const open = 1 - grip;
-      g.box(carX - 2, 112 - 4 * open, 120 + 6 * open, 4, 3, 16, { material: 'silhouette' });          // claw fingers
-      g.box(carX - 2, 125 + 4 * open, 120 + 6 * open, 4, 3, 16, { material: 'silhouette' });
-      return armX;
+      // the claw: a wrist under the carriage, a bar across the top of the arm, and two fingers down its
+      // sides. Closed, they sit just outside the arm's faces (y 112..128); opening swings them out and up.
+      const open = 1 - grip, fz = 104 + 8 * open;
+      g.box(carX - 2, 118, 130, 4, 4, 6, { material: 'silhouette' });                                  // wrist
+      g.box(carX - 4, 108 - 3 * open, 128 + 2 * open, 8, 24 + 6 * open, 3, { r: 1, material: 'silhouette' });   // bar
+      g.box(carX - 3, 108 - 3 * open, fz, 6, 3, 131 - fz, { material: 'silhouette' });               // back finger (behind the arm)
+      const front = () => g.box(carX - 3, 129 + 3 * open, fz, 6, 3, 131 - fz, { material: 'silhouette' });   // front finger (in front)
+      return { armX, front };
     };
     const arm = (x, side) => {
+      const al = lift * k.ramp(tArms + 1500, tArms + 1800);                              // held still by the claw until it reaches the shoulder
       const a = { op: outFlick * k.ramp(0, 600) };                                       // fades in at the loop start, out at its end
-      g.box(x, 112, TZ + 26 + lift, 10, 16, 32, { r: 3, tone: 'mid', ...a }).front.slits(2, 8, 3, 6, 26, true, { op: 0.6 * outFlick });   // upper arm
-      g.box(x + 1, 113, TZ + 4 + lift, 8, 14, 22, { r: 3, tone: 'hi', ...a });                     // forearm
-      g.box(x, 112, TZ - 6 + lift, 10, 16, 10, { r: 4, tone: 'mid', ...a });                       // hand
+      g.box(x, 112, TZ + 26 + al, 10, 16, 32, { r: 3, tone: 'mid', ...a }).front.slits(2, 8, 3, 6, 26, true, { op: 0.6 * outFlick });   // upper arm
+      g.box(x + 1, 113, TZ + 4 + al, 8, 14, 22, { r: 3, tone: 'hi', ...a });                     // forearm
+      g.box(x, 112, TZ - 6 + al, 10, 16, 10, { r: 4, tone: 'mid', ...a });                       // hand
       const shoulder = [side < 0 ? T0 : T1, CY, TZ + TH - 6 + lift];
       g.bloom(shoulder, 22, k.pulse(side < 0 ? tArms + 1750 : tArms + 1550, 400));
     };
     const showArms = t > tBody + 200;
-    pillar(28); const lx = gantry(-1); if (showArms) arm(lx, -1);
+    pillar(28); const L = gantry(-1); if (showArms) arm(L.armX, -1); L.front();
 
     // ---- legs, rising through the hatch ----
     const legH = (TZ - FZ) * rise;
@@ -137,7 +144,7 @@ ISOGRAM.define({
     }
 
     // ---- right arm and right gantry (in front) ----
-    const rx = gantry(1); if (showArms) arm(rx, 1); pillar(214);
+    const R = gantry(1); if (showArms) arm(R.armX, 1); R.front(); pillar(214);
 
     // ---- readout from the model ----
     g.readout(t < tHead ? 'body · ' + Math.round(mat * 100) + '%'
