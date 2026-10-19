@@ -3,6 +3,6 @@ contact_links:
   - name: Security vulnerability
     url: https://github.com/mtblck/isogram/security/advisories/new
     about: Report it privately, not as an issue.
-  - name: Live demo
-    url: https://mattblack.space/skills/isogram/
-    about: Every look, theme and export, running in your browser.
+  - name: Docs
+    url: https://getisogram.com/docs/
+    about: The guide, the API and the design rules.

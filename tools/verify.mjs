@@ -77,6 +77,52 @@ for (const f of examples()) {
   await page.close()
 }
 
+// The site (npm run site), served with vercel.json's headers so the CSP is enforced as in production.
+if (fs.existsSync(path.join(ROOT, 'dist', 'site', 'index.html'))) {
+  const { spawn } = await import('node:child_process')
+  const server = spawn(process.execPath, [path.join(ROOT, 'tools/serve.mjs')], { env: { ...process.env, PORT: '4181' }, stdio: 'pipe' })
+  await new Promise(r => server.stdout.once('data', r))
+  const base = 'http://localhost:4181'
+  for (const [theme, width] of [['light', 1280], ['dark', 390]]) {
+    const page = await browser.newPage({ viewport: { width, height: 900 }, colorScheme: theme })
+    const errors = []
+    page.on('console', m => { if (m.type() === 'error') errors.push(m.text()) })
+    page.on('pageerror', e => errors.push(e.message))
+    await page.addInitScript(() => document.addEventListener('securitypolicyviolation', e => console.error(`CSP blocked ${e.blockedURI} (${e.violatedDirective})`)))
+    await page.goto(base + '/')
+    await page.waitForFunction(() => [...document.querySelectorAll('iso-gram')].every(e => e._def), null, { timeout: 8000 }).catch(() => fails.push(`site/${theme}: diagrams never mounted`))
+    const painted = sel => page.evaluate(s => {
+      const cv = document.querySelector(s).shadowRoot.querySelector('canvas'), x = cv.getContext('2d')
+      const d = x.getImageData(0, 0, cv.width, cv.height).data, seen = new Set()
+      for (let i = 0; i < d.length; i += 4 * 97) seen.add(d[i] << 16 | d[i + 1] << 8 | d[i + 2])
+      return seen.size
+    }, sel)
+    if ((await painted('#hero')) < 8) fails.push(`site/${theme}: hero diagram is blank`)
+    if (await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)) fails.push(`site/${theme}@${width}: page scrolls sideways`)
+    await page.click('#hero-looks label:has(input[value="pixel"])')
+    if (await page.getAttribute('#hero', 'look') !== 'pixel') fails.push(`site/${theme}: hero look switch does nothing`)
+    await page.click('label:has(input[name="pg-name"][value="robot"])'); await page.waitForTimeout(200)
+    if (await page.evaluate(() => document.querySelector('#pg')._def.id) !== 'robot') fails.push(`site/${theme}: playground diagram switch does nothing`)
+    if (!/name="robot"/.test(await page.textContent('#embed'))) fails.push(`site/${theme}: embed code does not follow the playground`)
+    await page.click('#tab-code')
+    if (await page.isHidden('#panel-code')) fails.push(`site/${theme}: install tabs do not switch`)
+    const png = await page.evaluate(async () => (await document.querySelector('#pg').toPNG({ width: 400 })).size)
+    if (!(png > 3000)) fails.push(`site/${theme}: playground PNG export is ${png} bytes`)
+    for (const d of ['/docs/', '/docs/api/', '/docs/craft/']) {
+      const r = await page.goto(base + d)
+      if (!r.ok()) fails.push(`site: ${d} answered ${r.status()}`)
+      if (!(await page.textContent('main')).trim()) fails.push(`site: ${d} is empty`)
+    }
+    const skill = await page.request.get(base + '/isogram.skill')
+    if (!skill.ok() || (await skill.body()).length < 20000) fails.push('site: isogram.skill missing')
+    if (errors.length) fails.push(`site/${theme}: console errors: ${errors.join(' | ')}`)
+    if (shots) await page.goto(base + '/').then(() => page.waitForTimeout(600)).then(() => page.screenshot({ path: path.join(shots, `site-${theme}.png`), fullPage: true }))
+    console.log(`  ${errors.length ? 'FAIL' : 'ok  '} site (${theme}, ${width}px): diagrams paint, controls work, docs and download served, no CSP errors`)
+    await page.close()
+  }
+  server.kill()
+} else console.log('  (dist/site not built; skipping the site. Run npm run site first.)')
+
 await browser.close()
 if (fails.length) { console.error('\n' + fails.map(f => '  ✗ ' + f).join('\n')); process.exit(1) }
 console.log('\n  All checks passed.')

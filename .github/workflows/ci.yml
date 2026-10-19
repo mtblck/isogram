@@ -28,6 +28,8 @@ jobs:
       - run: npm test
       # every example through build.py, and dist/isogram.skill from the skill files only
       - run: npm run build
+      # getisogram.com, as Vercel builds it
+      - run: npm run site
 
   e2e:
     name: E2E (real browser)
@@ -42,7 +44,9 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run build
-      # every example in every look and theme draws, with no console errors, and exports
+      - run: npm run site
+      # every example in every look and theme draws, with no console errors, and exports;
+      # then the site, served with vercel.json's headers
       - run: npm run verify
         env:
           SHOTS: shots

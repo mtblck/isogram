@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{title}} · isogram docs</title>
+  <meta name="description" content="{{description}}" />
+  <link rel="canonical" href="https://getisogram.com{{path}}" />
+  <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/bricolage.woff2" />
+  <script src="/theme.js"></script>
+  <link rel="stylesheet" href="/site.css" />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top wrap">
+    <a class="mark" href="/" aria-label="isogram home">{{logo}}isogram</a>
+    <nav aria-label="Site">
+      <a href="/#examples">Examples</a>
+      <a href="/#playground">Playground</a>
+      <a href="/#install">Install</a>
+      <a href="/docs/" aria-current="page">Docs</a>
+      <a href="https://github.com/mtblck/isogram">GitHub</a>
+    </nav>
+    <button class="theme" id="theme" type="button">Dark</button>
+  </header>
+  <div class="docs wrap">
+    <nav aria-label="Docs">{{nav}}</nav>
+    <main id="main" class="prose">{{content}}</main>
+  </div>
+  <footer>
+    <div class="wrap">
+      <p>These pages are the skill's own files, the same ones Claude reads. <a href="https://github.com/mtblck/isogram/blob/main/{{source}}">Edit this page on GitHub</a>.</p>
+    </div>
+  </footer>
+  <script src="/docs.js"></script>
+</body>
+</html>

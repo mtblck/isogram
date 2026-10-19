@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>isogram · animated isometric diagrams, made by Claude</title>
+  <meta name="description" content="isogram is a Claude skill: describe a feature and Claude builds a small animated machine that shows how it works, in four looks, ready to embed as a web component, GIF, PNG or SVG." />
+  <meta property="og:title" content="isogram" />
+  <meta property="og:description" content="Describe a feature. Claude builds the machine that shows how it works." />
+  <meta property="og:url" content="https://getisogram.com/" />
+  <meta property="og:image" content="https://getisogram.com/og.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href="https://getisogram.com/" />
+  <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/bricolage.woff2" />
+  <script src="/theme.js"></script>
+  <link rel="stylesheet" href="/site.css" />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top wrap">
+    <a class="mark" href="/" aria-label="isogram home">{{logo}}isogram</a>
+    <nav aria-label="Site">
+      <a href="#examples">Examples</a>
+      <a href="#playground">Playground</a>
+      <a href="#install">Install</a>
+      <a href="/docs/">Docs</a>
+      <a href="https://github.com/mtblck/isogram">GitHub</a>
+    </nav>
+    <button class="theme" id="theme" type="button">Dark</button>
+  </header>
+
+  <main id="main">
+    <div class="hero wrap">
+      <div>
+        <h1>Diagrams that build the thing they explain.</h1>
+        <p class="lede">isogram is a skill for Claude. Describe a feature and Claude builds a small isometric machine whose motion shows how it works, with a caption for each step. Drop it into a page as a web component, or export a GIF, PNG or SVG.</p>
+        <div class="cta">
+          <a class="btn primary" href="/isogram.skill" download>Download the skill</a>
+          <a class="btn" href="#install">How to install</a>
+        </div>
+        <p class="note">Free and open source (MIT). Works in Claude.ai and Claude Code.</p>
+      </div>
+      <figure aria-label="A live isogram diagram">
+        <iso-gram id="hero" name="robot" look="vector"></iso-gram>
+        <fieldset class="looks" id="hero-looks">
+          <legend class="skip">Look</legend>
+          <label><input type="radio" name="hero-look" value="glow" />Glow<small>hairline, lit</small></label>
+          <label><input type="radio" name="hero-look" value="vector" checked />Vector<small>flat fills</small></label>
+          <label><input type="radio" name="hero-look" value="pixel" />Pixel<small>16 colours</small></label>
+          <label><input type="radio" name="hero-look" value="blueprint" />Blueprint<small>for docs</small></label>
+        </fieldset>
+      </figure>
+    </div>
+
+    <section id="examples" aria-labelledby="examples-h">
+      <div class="wrap">
+        <div class="head">
+          <h2 id="examples-h">Each one started as a sentence</h2>
+          <p>Every diagram here was built by Claude with the skill, from the request under it. Click one to step through it, or use the arrow keys.</p>
+        </div>
+        <div class="gallery">
+          <figure>
+            <iso-gram name="rocket" look="vector"></iso-gram>
+            <figcaption><b>Rocket round trip</b><blockquote>A rocket being built, launched into space, landing on a new platform and taken apart, then the loop starts over.</blockquote></figcaption>
+          </figure>
+          <figure>
+            <iso-gram name="pumpkin" look="vector"></iso-gram>
+            <figcaption><b>Jack-o'-lantern</b><blockquote>Carving a jack-o'-lantern in five steps, on a spooky altar.</blockquote></figcaption>
+          </figure>
+          <figure>
+            <iso-gram name="robot" look="pixel"></iso-gram>
+            <figcaption><b>Robot assembly</b><blockquote>The body flickers into existence, the head spirals down to screw on, claws bring in the arms, and the legs come up from below.</blockquote></figcaption>
+          </figure>
+          <figure>
+            <iso-gram name="starter" look="blueprint"></iso-gram>
+            <figcaption><b>Request and response</b><blockquote>A request travelling to a server and the response coming back.</blockquote></figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="playground" aria-labelledby="playground-h">
+      <div class="wrap">
+        <div class="head">
+          <h2 id="playground-h">Try every option</h2>
+          <p>This is the same component you embed. Change it here, then copy the tag or export a file.</p>
+        </div>
+        <div class="playground">
+          <div>
+            <iso-gram id="pg" name="rocket" look="vector"></iso-gram>
+            <div class="code">
+              <div class="code-head"><span>Embed code</span><button class="btn small" id="copy-embed" type="button">Copy</button></div>
+              <pre><code id="embed"></code></pre>
+            </div>
+          </div>
+          <div class="panel">
+            <fieldset><legend>Diagram</legend>
+              <div class="seg">
+                <label><input type="radio" name="pg-name" value="rocket" checked />Rocket</label>
+                <label><input type="radio" name="pg-name" value="robot" />Robot</label>
+                <label><input type="radio" name="pg-name" value="pumpkin" />Jack-o'-lantern</label>
+                <label><input type="radio" name="pg-name" value="starter" />Request</label>
+              </div>
+            </fieldset>
+            <fieldset><legend>Look</legend>
+              <div class="seg">
+                <label><input type="radio" name="pg-look" value="glow" />Glow</label>
+                <label><input type="radio" name="pg-look" value="vector" checked />Vector</label>
+                <label><input type="radio" name="pg-look" value="pixel" />Pixel</label>
+                <label><input type="radio" name="pg-look" value="blueprint" />Blueprint</label>
+              </div>
+            </fieldset>
+            <fieldset><legend>Theme</legend>
+              <div class="seg">
+                <label><input type="radio" name="pg-theme" value="own" checked />Its own</label>
+                <label><input type="radio" name="pg-theme" value="page" />Match the page</label>
+                <label><input type="radio" name="pg-theme" value="light" />Light</label>
+                <label><input type="radio" name="pg-theme" value="dark" />Dark</label>
+              </div>
+            </fieldset>
+            <fieldset><legend>Show</legend>
+              <div class="checks">
+                <label><input type="checkbox" id="pg-frame" checked />Card</label>
+                <label><input type="checkbox" id="pg-labels" checked />Captions</label>
+                <label><input type="checkbox" id="pg-progress" checked />Progress</label>
+              </div>
+            </fieldset>
+            <fieldset><legend>Colour</legend>
+              <div class="checks">
+                <label><input type="color" id="pg-accent" value="#2f45e6" aria-label="Accent colour" />Accent</label>
+                <label><input type="checkbox" id="pg-own" />The look's own</label>
+              </div>
+            </fieldset>
+            <fieldset id="pg-pxbox" hidden><legend>Pixel size</legend>
+              <select id="pg-pixel" aria-label="Pixel size"><option value="">Automatic</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+            </fieldset>
+            <fieldset><legend>Export</legend>
+              <div class="exports">
+                <button class="btn small" type="button" data-x="gif">GIF</button>
+                <button class="btn small" type="button" data-x="png">PNG</button>
+                <button class="btn small" type="button" data-x="svg">SVG</button>
+                <button class="btn small" type="button" data-x="webm">WebM</button>
+                <span class="status" id="status" role="status" aria-live="polite"></span>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" aria-labelledby="how-h">
+      <div class="wrap">
+        <div class="head">
+          <h2 id="how-h">From a sentence to a diagram</h2>
+          <p>Claude does the drawing. You describe the feature and say what to change.</p>
+        </div>
+        <ol class="steps">
+          <li><b>Describe the feature</b><p>“Show how our webhook retries work, vector look, for the docs.” Real numbers help: timeouts, limits, counts.</p></li>
+          <li><b>Claude picks a machine</b><p>Not boxes and arrows: an object whose working is the feature, like a tape deck for voicemail or a drawer cabinet for a cache.</p></li>
+          <li><b>It checks its own frames</b><p>It renders every step in every look, looks at them, and fixes what overlaps or reads badly before handing it over.</p></li>
+          <li><b>You drop it in</b><p>One script and one tag. It sizes to its box, pauses offscreen, respects reduced motion and steps with the arrow keys.</p></li>
+        </ol>
+        <pre class="snippet"><code>&lt;script src="webhooks.isogram.js"&gt;&lt;/script&gt;
+&lt;iso-gram name="webhooks" look="vector" theme="auto"&gt;&lt;/iso-gram&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="install" aria-labelledby="install-h">
+      <div class="wrap">
+        <div class="head">
+          <h2 id="install-h">Install</h2>
+          <p>The skill is a folder of instructions and two small scripts. Pick where you use Claude.</p>
+        </div>
+        <div class="tabs" role="tablist" aria-label="Where you use Claude">
+          <button role="tab" id="tab-ai" aria-controls="panel-ai" aria-selected="true">Claude.ai and the desktop app</button>
+          <button role="tab" id="tab-code" aria-controls="panel-code" aria-selected="false" tabindex="-1">Claude Code</button>
+          <button role="tab" id="tab-zip" aria-controls="panel-zip" aria-selected="false" tabindex="-1">From the source</button>
+        </div>
+        <div class="tabpanel" role="tabpanel" id="panel-ai" aria-labelledby="tab-ai">
+          <ol>
+            <li><a href="/isogram.skill" download>Download isogram.skill</a>.</li>
+            <li>Add it in Claude's settings, where your other skills are, by uploading the file.</li>
+            <li>Ask for one: “Make an isogram of how our search indexing works.”</li>
+          </ol>
+        </div>
+        <div class="tabpanel" role="tabpanel" id="panel-code" aria-labelledby="tab-code" hidden>
+          <ol>
+            <li>Unzip the skill into your skills folder:
+              <div class="cmd"><code id="cmd-code">curl -fsSL https://getisogram.com/isogram.skill -o /tmp/isogram.zip &amp;&amp; unzip -o /tmp/isogram.zip -d ~/.claude/skills/</code><button class="btn small" type="button" data-copy="cmd-code">Copy</button></div>
+            </li>
+            <li>Start a new session so Claude Code picks it up.</li>
+            <li>Ask for one, or call it by name: <code>/isogram</code>.</li>
+          </ol>
+        </div>
+        <div class="tabpanel" role="tabpanel" id="panel-zip" aria-labelledby="tab-zip" hidden>
+          <ol>
+            <li>Clone <a href="https://github.com/mtblck/isogram">mtblck/isogram</a>.</li>
+            <li>Run <code>npm ci &amp;&amp; npm run build</code>; the package is <code>dist/isogram.skill</code>, built from the skill's files only.</li>
+            <li>Install it as in the other tabs.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section id="safe" aria-labelledby="safe-h">
+      <div class="wrap two">
+        <div>
+          <div class="head"><h2 id="safe-h">What's in the file</h2></div>
+          <ul class="plain">
+            <li><b>Instructions in plain text.</b> <code>SKILL.md</code> and two reference files tell Claude how to design and check a diagram.</li>
+            <li><b>Nothing runs when you install it.</b> Adding a skill only makes the instructions available.</li>
+            <li><b>Two small scripts, no dependencies.</b> A Python script bundles a diagram into files; an optional Node script exports images if a browser is already installed. Neither installs anything.</li>
+            <li><b>The diagrams run in the page.</b> The component draws on a canvas in your visitor's browser and makes no network requests.</li>
+            <li><b>You can read all of it.</b> A <code>.skill</code> file is a zip: rename it and open it, or browse the <a href="https://github.com/mtblck/isogram">source</a>.</li>
+          </ul>
+        </div>
+        <div>
+          <div class="head"><h2>Questions</h2></div>
+          <details><summary>What's a skill?</summary><p>A folder of instructions Claude loads when a task needs it. This one teaches Claude to design isometric diagrams and gives it the runtime that draws them.</p></details>
+          <details><summary>Can I use the diagrams commercially?</summary><p>Yes. The skill and the runtime are MIT licensed, and what you make with them is yours.</p></details>
+          <details><summary>Does it need a framework?</summary><p>No. The output is one script defining an <code>&lt;iso-gram&gt;</code> element. It works in plain HTML, React, Vue, Astro or a docs site.</p></details>
+          <details><summary>Is it accessible?</summary><p>Each diagram has a label and a list of its step captions for screen readers, steps with the arrow keys, and shows a still frame when reduced motion is on.</p></details>
+          <details><summary>How do I update it?</summary><p>Download the skill again and replace the old one. Diagrams you've exported keep working: each carries its own copy of the runtime.</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p>Made by <a href="https://mattblack.space">Matt Black</a>. MIT licensed, <a href="https://github.com/mtblck/isogram">source on GitHub</a>.</p>
+      <p>Built on <a href="https://isoglow.dev">iso-glow</a> (after <a href="https://github.com/MrBongoC/ai-iso-skill">iso-figure</a> by Tolga Cohce) and <a href="https://skills.wheresryan.sh/anatomy">anatomy</a>, both MIT. Pixel palette after Sweetie 16 by GrafxKid.</p>
+    </div>
+  </footer>
+
+  <script src="/isogram.js"></script>
+  <script src="/examples.js"></script>
+  <script src="/site.js"></script>
+</body>
+</html>
