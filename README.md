@@ -35,6 +35,19 @@ Then ask for one:
 | `scripts/export.mjs` | Headless PNG/GIF/SVG/step-sheet export (needs an already-installed Chromium + Playwright) |
 | `examples/` | `starter.js` (35 lines), `pumpkin.js` (carving a jack-o'-lantern on a crypt altar), `robot.js` (a robot assembled by claws and hatches) and `rocket.js` (build, lift off as the platform falls away, fly, land on a new platform, unstack) |
 
+## Developing
+
+The repo holds the skill and the tooling that checks it; only the skill's own files go in `isogram.skill`.
+
+```sh
+npm ci
+npm test          # every example's scene across its loop in every look, the SVG export, build.py, the package contents
+npm run build     # dist/examples/ (each example through build.py) and dist/isogram.skill
+npm run verify    # each example in a real browser: every look and theme paints, steps and exports
+```
+
+CI runs all three on every pull request, and Claude reviews a PR when it's marked ready.
+
 ## Design notes
 
 - **A diagram is a pure function of time.** `draw(g, k)` is called every frame with the loop time; there is no other state. That's what lets one scene render live in every look and export to a GIF that is exactly what the page shows.
