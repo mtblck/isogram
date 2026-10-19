@@ -700,7 +700,7 @@
     .play { position:absolute; right:8px; top:8px; width:28px; height:28px; border-radius:50%; border:1px solid var(--line); background:var(--panel);
       color:var(--ink-hi); display:grid; place-items:center; opacity:0; transition:opacity .2s; cursor:pointer; padding:0; }
     .stage:hover .play, .play:focus-visible, .paused .play { opacity:1; }
-    .play svg { width:10px; height:10px; fill:currentColor; }
+    .play svg { width:10px; height:10px; fill:currentColor; pointer-events:none; }
     .bare.card { background:none; border:0; padding:0; }
     .bare .row, .bare .steps, .nolabels .row, .noprogress .steps { display:none; }
     .clear.card { background:transparent; border-color:transparent; }
@@ -709,7 +709,7 @@
     .transport button { flex:none; width:28px; height:28px; border-radius:8px; border:1px solid var(--line); background:none; color:var(--ink-hi); display:grid; place-items:center; cursor:pointer; padding:0; }
     .transport button:hover { border-color:var(--ink); }
     .transport button:focus-visible, .transport input:focus-visible { outline:1px solid var(--accent); outline-offset:2px; }
-    .transport svg { width:10px; height:10px; fill:currentColor; }
+    .transport svg { width:10px; height:10px; fill:currentColor; pointer-events:none; }
     .transport input { flex:1; min-width:60px; margin:0; accent-color:var(--accent); cursor:pointer; }
     .transport output { flex:none; min-width:7.5em; text-align:right; font-variant-numeric:tabular-nums; color:var(--ink-hi); }
     .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
@@ -817,8 +817,13 @@
       if (sc.readout !== this._read) { e.read.textContent = this._read = sc.readout; }
       if (this._bars) this._bars.forEach((s, i) => { const f = i < sc.k.i ? 1 : i > sc.k.i ? 0 : sc.k.u; s.style.width = (f * 100).toFixed(1) + '%'; });
       e.card.classList.toggle('paused', !this._playing);
-      e.play.innerHTML = e.tplay.innerHTML = this._playing ? PAUSE : PLAY;
-      e.play.setAttribute('aria-label', this._playing ? 'Pause' : 'Play'); e.tplay.setAttribute('aria-label', this._playing ? 'Pause' : 'Play');
+      // Only when the state changes: rewriting the icon every frame swapped the node under the pointer
+      // between mouse-down and mouse-up, and the browser then dropped the click.
+      if (this._shownPlaying !== this._playing) {
+        this._shownPlaying = this._playing;
+        e.play.innerHTML = e.tplay.innerHTML = this._playing ? PAUSE : PLAY;
+        e.play.setAttribute('aria-label', this._playing ? 'Pause' : 'Play'); e.tplay.setAttribute('aria-label', this._playing ? 'Pause' : 'Play');
+      }
       if (this.hasAttribute('controls')) {
         e.scrub.max = String(Math.round(this._def.duration)); e.scrub.value = String(Math.round(this._t));
         e.time.textContent = (this._t / 1000).toFixed(2) + ' / ' + (this._def.duration / 1000).toFixed(2) + ' s';

@@ -49,6 +49,21 @@ for (const f of examples()) {
   await page.evaluate(() => document.querySelector('#d').shadowRoot.querySelector('.stage').focus()); await page.keyboard.press('ArrowRight'); await page.waitForTimeout(100)
   if (await page.evaluate(() => document.querySelector('#d')._t) === before) fails.push(`${id}: ArrowRight did not step`)
 
+  // Play/pause takes every click while the diagram runs: a slow press (mouse-down, a few frames, mouse-up)
+  // once lost clicks because the icon was redrawn every frame.
+  for (const sel of ['.play', '.tplay']) {
+    await page.evaluate(s => { const e = document.querySelector('#d'); if (s === '.tplay') e.setAttribute('controls', ''); e.play() }, sel)
+    const box = await page.evaluate(s => { const r = document.querySelector('#d').shadowRoot.querySelector(s).getBoundingClientRect(); return { x: r.x + r.width / 2, y: r.y + r.height / 2 } }, sel)
+    let missed = 0
+    for (let i = 0; i < 6; i++) {
+      const was = await page.evaluate(() => document.querySelector('#d').paused)
+      await page.mouse.move(box.x, box.y); await page.mouse.down(); await page.waitForTimeout(90); await page.mouse.up(); await page.waitForTimeout(40)
+      if (await page.evaluate(() => document.querySelector('#d').paused) === was) missed++
+    }
+    if (missed) fails.push(`${id}: ${sel === '.play' ? 'corner' : 'transport'} play/pause missed ${missed} of 6 clicks`)
+    await page.evaluate(() => { const e = document.querySelector('#d'); e.removeAttribute('controls'); e.pause() })
+  }
+
   // The transport (controls attribute): scrubbing sets the time, frame steps move by 1/30 s, and stills
   // save the frame on screen.
   const tr = await page.evaluate(() => {
