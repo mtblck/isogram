@@ -85,12 +85,19 @@ ISOGRAM.define({
       const pad = g.cyl(PAD[0], PAD[1], z0, 30, PAD_Z, { tone: 'mid', op });
       pad.ring(20, { role: 'detail' });
       for (let j = 0; j < 8; j++) { const a = j / 8 * 2 * PI; g.term([PAD[0] + 25 * Math.cos(a), PAD[1] + 25 * Math.sin(a), z0 + PAD_Z], t > tLand && settle < 1 ? (Math.floor(t / 150) + j) % 2 : 0, 1.5); }
-      // launch tower on the left with an umbilical arm that swings clear before ignition
+      // launch tower on the left; its umbilical arm telescopes out of the tower to the upper stage once that is stacked,
+      // pulls back in before ignition, and reaches out again after the landing until the upper stage comes off
       const tower = g.box(18, 66, z0, 14, 14, 128, { r: 2, tone: 'mid', op });
       tower.front.slits(3, 11, 4, 6, 122, true, { op: 0.6 * op }); tower.side.slits(3, 11, 4, 6, 122, true, { op: 0.6 * op });
       [44, 88, 124].forEach((z, j) => g.term([25, 80, z0 + z], 0.5 + 0.5 * Math.sin(t / 250 + j), 1.8));
-      const swing = k.ramp(tLaunch + 100, tLaunch + 600) * (1 - k.ramp(tUn - 400, tUn));
-      g.box(32, 70 - 22 * swing, z0 + 96, 33 - 18 * swing, 5, 5, { r: 1, tone: 'mid', op });
+      const docked = tBuild + 250 + 2 * 840 + 800, released = tUn + 300 + 800;     // upper stage placed / lifted off
+      const ext = t < tLand ? k.ramp(docked, docked + 450, k.easeInOut) * (1 - k.ramp(tLaunch + 100, tLaunch + 600, k.easeInOut))
+        : k.ramp(tLand + 1800, tLand + 2250, k.easeInOut) * (1 - k.ramp(released - 450, released - 50, k.easeInOut));
+      const AX = 32, REACH = 67 - AX, AZ = z0 + 95;                                // tower face to the rocket's skin
+      g.box(AX, 71, AZ - 1, 6, 7, 7, { r: 1, tone: 'mid', op });                     // fixed sleeve on the tower
+      const L = 4 + (REACH - 6) * ext;                                             // inner boom slides out of the sleeve
+      g.box(AX + 4, 72, AZ, L, 5, 5, { r: 1, tone: 'mid', op });
+      if (ext > 0.02) g.box(AX + 4 + L - 2, 70.5, AZ - 1.5, 3, 8, 8, { r: 1, tone: 'hi', op });   // clamp pad at its tip
       // parts waiting in the row
       ROW.forEach(([x, y], i) => { if ((t < tLaunch && pickU(i) <= 0) || (t > tUn && dropU(i) >= 1)) part(i, x, y, z0, op); });
       // smoke rolling off the pad at ignition, carried down with the platform
