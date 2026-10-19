@@ -55,13 +55,16 @@ ISOGRAM.define({
     if (field > 0.02) g.top(CX - 30, CY - 22, FZ + 0.5, 60, 44).rect(0, 0, 60, 44, { r: 22, role: 'detail', lit: field });
 
     // ---- left gantry (behind) and left arm ----
+    // Draw order follows depth: the left pillar sits behind its arm, so it goes first; the right pillar is
+    // nearer than its rail, carriage and waiting arm, so it is drawn last (see the right side below).
+    const pillar = px => g.box(px, 106, FZ, 18, 28, 150, { r: 3, tone: 'mid' }).front.slits(4, 14, 3, 10, 140, true, { op: 0.5 });
     const gantry = (side) => {                                                          // side -1 = left (small x), +1 = right
       const px = side < 0 ? 28 : 214, u = side < 0 ? armUL : armU;
       const armX = side < 0 ? T0 - 12 - 48 * (1 - u) : T1 + 2 + 48 * (1 - u);       // arm's inner x: waits just inside the pillar
-      const home = px + 9, carX = armX + 5 + (home - (armX + 5)) * back;               // carriage rides with the arm, then returns
-      g.box(px, 106, FZ, 18, 28, 150, { r: 3, tone: 'mid' }).front.slits(4, 14, 3, 10, 140, true, { op: 0.5 });
+      const home = side < 0 ? px + 18 + 9 : px - 9;                                     // carriage parks beside its pillar, not in it
+      const carX = armX + 5 + (home - (armX + 5)) * back;                               // rides with the arm, then returns
       const r0 = side < 0 ? px + 18 : carX + 7, r1 = side < 0 ? carX - 7 : px;
-      g.box(Math.min(r0, r1), 116, 146, Math.abs(r1 - r0), 8, 6, { r: 1, tone: 'mid' });          // rail boom
+      g.box(Math.min(r0, r1), 116, 146, Math.max(1, Math.abs(r1 - r0)), 8, 6, { r: 1, tone: 'mid' });   // rail boom out of the pillar
       g.box(carX - 7, 112, 136, 14, 16, 10, { r: 2, material: 'silhouette' });                       // carriage
       const open = 1 - grip;
       g.box(carX - 2, 112 - 4 * open, 120 + 6 * open, 4, 3, 16, { material: 'silhouette' });          // claw fingers
@@ -77,15 +80,17 @@ ISOGRAM.define({
       g.bloom(shoulder, 22, k.pulse(side < 0 ? tArms + 1750 : tArms + 1550, 400));
     };
     const showArms = t > tBody + 200;
-    const lx = gantry(-1); if (showArms) arm(lx, -1);
+    pillar(28); const lx = gantry(-1); if (showArms) arm(lx, -1);
 
     // ---- legs, rising through the hatch ----
     const legH = (TZ - FZ) * rise;
     if (legH > 0.5) {
+      // each leg rises with its foot at the bottom: foot first (lower, wider, toe forward), the leg standing on it
+      const FH = Math.min(6, legH);
       [112, 136].forEach(x => {
-        g.box(x, 112, FZ, 12, 16, legH, { r: 3, tone: 'mid', op: outFlick }).front.slits(2, 10, 4, 4, Math.max(4, legH - 4), true, { op: 0.5 });
+        g.box(x - 2, 110, FZ, 16, 24, FH, { r: 3, tone: 'hi', op: outFlick });
+        if (legH > FH + 0.5) g.box(x, 112, FZ + FH, 12, 16, legH - FH, { r: 3, tone: 'mid', op: outFlick }).front.slits(2, 10, 4, 4, Math.max(4, legH - FH - 4), true, { op: 0.5 });
       });
-      if (rise >= 1) { g.box(108, 108, FZ, 20, 24, 6, { r: 3, tone: 'hi' }); g.box(132, 108, FZ, 20, 24, 6, { r: 3, tone: 'hi' }); }   // feet lock on
       g.bloom([CX, CY, TZ], 30, k.pulse(tLegs + 2150, 450));
     }
 
@@ -132,7 +137,7 @@ ISOGRAM.define({
     }
 
     // ---- right arm and right gantry (in front) ----
-    const rx = gantry(1); if (showArms) arm(rx, 1);
+    const rx = gantry(1); if (showArms) arm(rx, 1); pillar(214);
 
     // ---- readout from the model ----
     g.readout(t < tHead ? 'body · ' + Math.round(mat * 100) + '%'
