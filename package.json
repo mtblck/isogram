@@ -7,12 +7,17 @@
   "scripts": {
     "test": "node --test \"test/*.test.mjs\"",
     "build": "node tools/build.mjs",
-    "verify": "node tools/verify.mjs"
+    "verify": "node tools/verify.mjs",
+    "site": "node tools/site.mjs",
+    "preview": "node tools/serve.mjs"
   },
   "engines": {
     "node": ">=22"
   },
   "devDependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "marked": "^16.4.2",
     "playwright": "1.64.1"
   }
 }

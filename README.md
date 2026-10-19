@@ -2,7 +2,7 @@
 
 A [Claude](https://claude.ai) skill for animated isometric diagrams that explain how a feature works. You describe the feature; Claude invents a small machine whose motion *is* the explanation (a jack-o'-lantern on a crypt altar whose carved face lights up when the candle goes in, a server that answers a request), and hands it back as a drop-in web component, a GIF, a PNG or an SVG.
 
-**Live demo:** [mattblack.space/skills/isogram](https://mattblack.space/skills/isogram/)
+**Site:** [getisogram.com](https://getisogram.com): live examples, a playground and the docs.
 
 ```html
 <script src="pumpkin.isogram.js"></script>
@@ -11,7 +11,7 @@ A [Claude](https://claude.ai) skill for animated isometric diagrams that explain
 
 ## Install
 
-Download [`isogram.skill`](https://mattblack.space/skills/isogram/isogram.skill) from the demo page (or zip this folder as `isogram/`) and add it to Claude as a skill. In Claude Code you can also copy the folder to `~/.claude/skills/isogram/`.
+Download [`isogram.skill`](https://getisogram.com/isogram.skill) from the site (or zip this folder as `isogram/`) and add it to Claude as a skill. In Claude Code you can also copy the folder to `~/.claude/skills/isogram/`.
 
 Then ask for one:
 
@@ -43,7 +43,8 @@ The repo holds the skill and the tooling that checks it; only the skill's own fi
 npm ci
 npm test          # every example's scene across its loop in every look, the SVG export, build.py, the package contents
 npm run build     # dist/examples/ (each example through build.py) and dist/isogram.skill
-npm run verify    # each example in a real browser: every look and theme paints, steps and exports
+npm run site      # getisogram.com into dist/site (npm run preview serves it with production headers)
+npm run verify    # each example in a real browser (every look and theme paints, steps and exports), then the site
 ```
 
 CI runs all three on every pull request, and Claude reviews a PR when it's marked ready.
