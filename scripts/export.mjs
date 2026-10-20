@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Headless export of a built isogram page (NAME.html from build.py) to image files.
 //   node export.mjs NAME.html [--looks glow,vector,pixel,blueprint] [--formats png,gif,svg,sheet] [--width 800]
-//        [--theme light|dark] [--accent #hex] [--no-frame] [--no-labels] [--no-progress] [--transparent] [--pixel-size 1|2|3] [--t ms] [--fps 20] [--out DIR]
+//        [--theme light|dark] [--accent #hex] [--background #hex] [--no-frame] [--no-labels] [--no-progress] [--transparent] [--pixel-size 1|2|3] [--t ms] [--fps 20] [--out DIR]
 // Needs Playwright + a Chromium that is ALREADY installed. It never downloads a browser; if none is
 // found it says so and exits 2: then use the Export buttons in NAME.html instead.
 import fs from 'node:fs'; import path from 'node:path'; import { pathToFileURL } from 'node:url'; import { createRequire } from 'node:module';
@@ -35,7 +35,7 @@ try {
   await page.goto(pathToFileURL(path.resolve(page0)).href);
   await page.waitForFunction(() => window.ISOGRAM && document.querySelector('iso-gram') && document.querySelector('iso-gram')._def, null, { timeout: 15000 });
   const all = looks.length ? looks : await page.evaluate(() => Object.keys(ISOGRAM.LOOKS));
-  const o = { width, fps, frame: !args.includes('--no-frame'), labels: !args.includes('--no-labels'), pixelSize: +(opt('pixel-size') || 0), progress: !args.includes('--no-progress'), transparent: args.includes('--transparent'), theme: opt('theme'), accent: opt('accent'), t: opt('t') != null ? +opt('t') : undefined };
+  const o = { width, fps, frame: !args.includes('--no-frame'), labels: !args.includes('--no-labels'), pixelSize: +(opt('pixel-size') || 0), progress: !args.includes('--no-progress'), transparent: args.includes('--transparent'), theme: opt('theme'), accent: opt('accent'), background: opt('background'), t: opt('t') != null ? +opt('t') : undefined };
   for (const look of all) for (const f of formats) {
     const r = await page.evaluate(async ({ look, f, o }) => {
       const el = document.querySelector('iso-gram'), x = Object.assign({}, o, { look });

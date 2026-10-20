@@ -135,6 +135,13 @@
                 <button class="btn small" type="button" id="pg-accent-reset" disabled>Reset</button>
               </div>
             </fieldset>
+            <fieldset aria-describedby="d-bg"><legend>Background</legend>
+              <p class="desc" id="d-bg">The card behind the drawing, and the frame around it in exports. The theme's text stays light or dark, so pair a dark background with Dark.</p>
+              <div class="checks">
+                <label><input type="color" id="pg-bg" value="#16171d" aria-label="Background colour" />Colour</label>
+                <button class="btn small" type="button" id="pg-bg-reset" disabled>Reset</button>
+              </div>
+            </fieldset>
             <fieldset aria-describedby="d-pixel" id="pg-pxbox"><legend>Pixel size</legend>
               <p class="desc" id="d-pixel">Pixel look only: how many screen pixels make one art pixel. 1 is the finest; 2 and 3 are chunkier.</p>
               <select id="pg-pixel" aria-label="Pixel size" disabled><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option></select>

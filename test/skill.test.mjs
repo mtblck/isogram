@@ -90,3 +90,17 @@ test('build.py writes a page, a script and an embed for an example', () => {
   assert.ok(js.includes('window.ISOGRAM') && js.includes("id: 'starter'"), 'script bundles the runtime and the diagram')
   fs.rmSync(out, { recursive: true, force: true })
 })
+
+test('a background colour replaces the card colour in every look, and joins the pixel palette', () => {
+  const I = loadRuntime()
+  for (const look of Object.keys(I.LOOKS)) for (const theme of ['light', 'dark']) {
+    const T = I.themeOf(look, theme, null, '#3a5'), plain = I.themeOf(look, theme)
+    assert.equal(T.panel, '#33aa55', `${look}/${theme}: #rgb expands and becomes the card`)
+    assert.equal(T.bg, '#33aa55', `${look}/${theme}: and the frame around exports`)
+    assert.equal(T.ink, plain.ink, `${look}/${theme}: text colours are left alone`)
+    assert.equal(I.themeOf(look, theme, null, 'red').panel, plain.panel, `${look}/${theme}: non-hex is ignored`)
+  }
+  const def = I.get('starter')
+  const svg = I._internal.toSVG(def, def.still, { look: 'vector', T: I.themeOf('vector', 'dark', null, '#123456'), frame: true, labels: true, progress: true })
+  assert.match(svg, /fill="#123456"/, 'the SVG export paints it')
+})

@@ -81,6 +81,19 @@ for (const f of examples()) {
   if (Math.abs(tr.step - 1000 / 30) > 0.5) fails.push(`${id}: frame step moved ${tr.step} ms`)
   if (!tr.same) fails.push(`${id}: SVG export is not the frame on screen`)
 
+  // background: the stage and the PNG export take the colour
+  const bgOk = await page.evaluate(async () => {
+    const e = document.querySelector('#d'); e.setAttribute('background', '#3a5f0b')
+    const cv = e.shadowRoot.querySelector('canvas'), px = cv.getContext('2d').getImageData(2, 2, 1, 1).data
+    const png = await e.toPNG({ width: 200 }), img = await createImageBitmap(png), c = new OffscreenCanvas(img.width, img.height), x = c.getContext('2d')
+    x.drawImage(img, 0, 0); const q = x.getImageData(img.width >> 1, 3, 1, 1).data
+    e.removeAttribute('background')
+    const near = (p, r, g, b) => Math.abs(p[0] - r) + Math.abs(p[1] - g) + Math.abs(p[2] - b) < 40
+    return { stage: near(px, 0x3a, 0x5f, 0x0b), png: near(q, 0x3a, 0x5f, 0x0b) }
+  })
+  if (!bgOk.stage) fails.push(`${id}: background attribute does not colour the stage`)
+  if (!bgOk.png) fails.push(`${id}: background attribute does not colour the PNG export`)
+
   const sizes = await page.evaluate(async () => {
     const e = document.querySelector('#d')
     e.setAttribute('look', 'vector')
@@ -140,6 +153,10 @@ if (fs.existsSync(path.join(ROOT, 'dist', 'site', 'index.html'))) {
     if (await page.getAttribute('#pg', 'theme') !== 'light' || !/theme="light"/.test(await page.textContent('#embed'))) fails.push(`site/${theme}: playground theme switch does nothing`)
     if (!(await page.evaluate(() => getComputedStyle(document.querySelector('#pg').shadowRoot.querySelector('.transport')).display !== 'none'))) fails.push(`site/${theme}: playground has no transport controls`)
     if (await page.evaluate(() => getComputedStyle(document.querySelector('.top')).position) !== 'sticky') fails.push(`site/${theme}: header is not sticky`)
+    await page.fill('#pg-bg', '#204060')
+    if (await page.getAttribute('#pg', 'background') !== '#204060' || !/background="#204060"/.test(await page.textContent('#embed'))) fails.push(`site/${theme}: playground background does nothing`)
+    await page.click('#pg-bg-reset')
+    if (await page.getAttribute('#pg', 'background') !== null) fails.push(`site/${theme}: background reset does nothing`)
     if (!(await page.isDisabled('#pg-pixel'))) fails.push(`site/${theme}: pixel size is enabled outside the pixel look`)
     await page.click('label:has(input[name="pg-look"][value="pixel"])')
     if (await page.isDisabled('#pg-pixel')) fails.push(`site/${theme}: pixel size stays disabled in the pixel look`)
