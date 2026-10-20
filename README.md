@@ -21,7 +21,7 @@ Then ask for one:
 
 - **Four looks from one scene:** `glow` (hairlines, accent glow on what's active), `vector` (flat fills shaded by facing, soft shadows), `pixel` (2:1 pixel art, 16-colour palette, slanted bitmap labels), `blueprint` (white linework on blue). Each has light and dark themes.
 - **`<iso-gram>` web component:** shadow DOM, sizes to its container, pauses offscreen, shows a still frame under reduced motion, steps with the arrow keys, and keeps beat captions in a screen-reader list. Attributes: `look`, `theme`, `accent`, `frame="none"`, `labels="none"`, `progress="none"`, `transparent`, `pixel-size`, `speed`, `paused`, `fig`.
-- **Exports:** looping GIF (only changed regions stored per frame), PNG, SVG (vector looks), WebM, and a step sheet with one frame per beat — from the preview page's buttons, the element's methods, or headlessly with `scripts/export.mjs`.
+- **Exports:** looping GIF (only changed regions stored per frame), PNG, SVG (vector looks), WebM and MP4 at 30 fps (ffmpeg-encoded from `export.mjs` when it's installed: ~100–200 KB a loop), and a step sheet with one frame per beat — from the preview page's buttons, the element's methods, or headlessly with `scripts/export.mjs`.
 
 ## Layout
 

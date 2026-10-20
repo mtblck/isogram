@@ -876,18 +876,37 @@
       const cs = i => Math.round((i + 1) * def.duration / n / 10) - Math.round(i * def.duration / n / 10);   // exact loop length
       return new Blob([encodeGIF(cv.width, cv.height, idx, pal, idx.map((_, i) => cs(i)))], { type: 'image/gif' });
     }
-    toWebM(o = {}) {   // real-time recording of one loop
-      const def = this._def, x = this._xopts(o), fps = o.fps || 30;
-      const first = renderExport(def, 0, x), cv = first.canvas, stream = cv.captureStream(fps);
-      const type = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'].find(t => window.MediaRecorder && MediaRecorder.isTypeSupported(t));
-      if (!type) return Promise.reject(new Error('MediaRecorder/WebM not supported in this browser'));
-      const rec = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 6e6 }), chunks = [];
+    // One loop as video at a steady frame rate (30 by default). Each frame is rendered at its exact time and
+    // handed to the encoder by hand (captureStream(0) + requestFrame), so the file holds `fps` frames per
+    // second whatever the display's refresh rate (a 120 Hz screen used to give 120 fps files). It still
+    // takes one loop of real time, because MediaRecorder stamps frames with the clock. The bitrate scales
+    // with the picture (about 0.03 bits per pixel per frame): flat isometric art needs little.
+    videoTypes() { return { webm: ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'], mp4: ['video/mp4;codecs=avc1.42E01F', 'video/mp4;codecs=avc1', 'video/mp4'] }; }
+    canRecord(kind = 'webm') { return !!(window.MediaRecorder && this.videoTypes()[kind].find(t => MediaRecorder.isTypeSupported(t))); }
+    toVideo(o = {}) {
+      const def = this._def, x = this._xopts(o), fps = o.fps || 30, kind = o.type === 'mp4' ? 'mp4' : 'webm';
+      const type = window.MediaRecorder && this.videoTypes()[kind].find(t => MediaRecorder.isTypeSupported(t));
+      if (!type) return Promise.reject(new Error(`This browser can't record ${kind.toUpperCase()}`));
+      const cv = renderExport(def, 0, x).canvas, stream = cv.captureStream(0), track = stream.getVideoTracks()[0];
+      const bitrate = o.bitrate || Math.round(Math.min(4e6, Math.max(2.5e5, cv.width * cv.height * fps * 0.03)));
+      const rec = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: bitrate }), chunks = [];
       rec.ondataavailable = e => e.data.size && chunks.push(e.data);
-      return new Promise(res => { rec.onstop = () => res(new Blob(chunks, { type: 'video/webm' }));
+      const n = Math.max(1, Math.round(def.duration / 1000 * fps)), step = 1000 / fps;
+      return new Promise((res, rej) => {
+        rec.onstop = () => res(new Blob(chunks, { type: type.split(';')[0] }));
+        rec.onerror = e => rej(e.error || new Error('recording failed'));
         rec.start(); const t0 = performance.now();
-        const f = now => { const t = now - t0; if (t >= def.duration) { rec.stop(); return; } renderExport(def, t, x, cv); requestAnimationFrame(f); };
-        requestAnimationFrame(f); });
+        const frame = i => {
+          if (i >= n) { setTimeout(() => rec.stop(), step); return; }
+          renderExport(def, i * def.duration / n, x, cv); track.requestFrame && track.requestFrame();
+          if (o.onProgress) o.onProgress(i / n);
+          setTimeout(() => frame(i + 1), Math.max(0, t0 + (i + 1) * step - performance.now()));
+        };
+        frame(0);
+      });
     }
+    toWebM(o = {}) { return this.toVideo(Object.assign({}, o, { type: 'webm' })); }
+    toMP4(o = {}) { return this.toVideo(Object.assign({}, o, { type: 'mp4' })); }
     toSheet(o = {}) {   // one still per beat, for review
       const def = this._def, cols = o.cols || 2, w = o.width || 520, x = this._xopts(Object.assign({}, o, { width: w }));
       const shots = def.beats.map((b, i) => { const end = i + 1 < def.beats.length ? def.beats[i + 1].at : def.duration;

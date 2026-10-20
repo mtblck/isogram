@@ -119,6 +119,17 @@ for (const f of examples()) {
   const gif = await page.evaluate(async () => { const b = await document.querySelector('iso-gram').toGIF({ width: 240, fps: 8 }); return [b.size, b.type] })
   if (!(gif[0] > 5000) || gif[1] !== 'image/gif') fails.push(`starter: GIF export is ${gif[0]} bytes, ${gif[1]}`)
   else console.log(`  ok   starter: GIF export ${(gif[0] / 1024).toFixed(0)} KB`)
+  // Video holds a steady 30 fps (it once followed the display's refresh rate: 120 fps files)
+  const vid = await page.evaluate(async () => { const e = document.querySelector('iso-gram'), b = await e.toVideo({ type: 'webm', width: 320 })
+    const u = new Uint8Array(await b.arrayBuffer()); let s = ''; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode(...u.subarray(i, i + 0x8000)); return { data: btoa(s), dur: e.duration } })
+  const { spawnSync } = await import('node:child_process'), os = await import('node:os')
+  const vf = path.join(os.tmpdir(), 'isogram-verify.webm'); fs.writeFileSync(vf, Buffer.from(vid.data, 'base64'))
+  const pr = spawnSync('ffprobe', ['-v', 'error', '-count_frames', '-select_streams', 'v', '-show_entries', 'stream=nb_read_frames', '-of', 'csv=p=0', vf], { encoding: 'utf8' })
+  if (pr.status === 0) {
+    const frames = +pr.stdout.trim(), want = vid.dur / 1000 * 30
+    if (Math.abs(frames - want) > 4) fails.push(`starter: WebM has ${frames} frames, wanted about ${want} (30 fps)`)
+    else console.log(`  ok   starter: WebM ${(fs.statSync(vf).size / 1024).toFixed(0)} KB, ${frames} frames (30 fps)`)
+  } else console.log('  (no ffprobe; WebM frame rate not checked)')
   await page.close()
 }
 
