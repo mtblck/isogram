@@ -48,7 +48,7 @@
   <div class="bar">
     <div class="grp"><span>Export</span>
       <button class="go" data-x="gif">GIF</button><button class="go" data-x="png">PNG</button><button class="go" data-x="svg">SVG</button>
-      <button class="go" data-x="webm">WebM</button><button class="go" data-x="sheet">Step sheet</button><button class="go" data-x="embed">Embed .html</button>
+      <button class="go" data-x="webm">WebM</button><button class="go" data-x="mp4" hidden>MP4</button><button class="go" data-x="sheet">Step sheet</button><button class="go" data-x="embed">Embed .html</button>
       <span class="hint">PNG and SVG save the frame on screen: pause and scrub to pick it</span>
     </div>
     <div class="grp"><span>Width</span><select id="width"><option>480</option><option selected>800</option><option>1200</option><option>1600</option></select></div>
@@ -140,7 +140,7 @@
       if (x === 'gif') { status('rendering GIF…'); await save(await el.toGIF(Object.assign({}, o, { width: Math.min(w, 960), onProgress: p => status('rendering GIF… ' + Math.round(p * 100) + '%') })), base + '.gif'); }
       if (x === 'png') await save(await el.toPNG(o), base + '.png');
       if (x === 'svg') await save(new Blob([el.toSVG(o)], { type: 'image/svg+xml' }), base + '.svg');
-      if (x === 'webm') { status('recording one loop…'); await save(await el.toWebM(o), base + '.webm'); }
+      if (x === 'webm' || x === 'mp4') { status('recording one loop at 30 fps… keep this tab in front'); await save(await el.toVideo(Object.assign({}, o, { type: x, onProgress: p => status('recording one loop at 30 fps… ' + Math.round(p * 100) + '%') })), base + '.' + x); }
       if (x === 'sheet') await save(await el.toSheet({ width: 520, frame: true, labels: true, progress: true }), base + '-steps.png');
       if (x === 'embed') {
         const attrs = $('code').value.split('\n').slice(1).join('\n');
@@ -150,6 +150,7 @@
       status('done');
     } catch (e) { status('error: ' + e.message); console.error(e); }
   });
+  if (els[0].canRecord && els[0].canRecord('mp4')) document.querySelector('[data-x="mp4"]').hidden = false;   // Safari, recent Chrome
   apply();
 })();
 </script>

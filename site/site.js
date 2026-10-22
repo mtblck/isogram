@@ -86,7 +86,10 @@
         if (x === 'gif') { status.textContent = 'Making the GIF…'; save(await main.toGIF({ width: 640, onProgress: function (p) { status.textContent = 'Making the GIF… ' + Math.round(p * 100) + '%' } }), base + '.gif') }
         if (x === 'png') save(await main.toPNG(o), base + '.png')
         if (x === 'svg') save(new Blob([main.toSVG(o)], { type: 'image/svg+xml' }), base + '.svg')
-        if (x === 'webm') { status.textContent = 'Recording one loop…'; save(await main.toWebM(o), base + '.webm') }
+        if (x === 'webm' || x === 'mp4') {
+          status.textContent = 'Recording one loop at 30 fps…'
+          save(await main.toVideo(Object.assign({}, o, { type: x, onProgress: function (p) { status.textContent = 'Recording one loop at 30 fps… ' + Math.round(p * 100) + '%' } })), base + '.' + x)
+        }
         status.textContent = 'Saved ' + base + '.' + x
       } catch (e) { status.textContent = 'Export failed: ' + e.message }
       finally { $$('[data-x]').forEach(function (y) { y.disabled = false }) }
@@ -119,5 +122,7 @@
     })
   })
 
+  // MP4 only where the browser can record it (Safari, recent Chrome)
+  if (main.canRecord && main.canRecord('mp4')) $('[data-x="mp4"]').hidden = false
   paintThemeBtn(); followTheme(); apply()
 })()

@@ -147,12 +147,13 @@
               <select id="pg-pixel" aria-label="Pixel size" disabled><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option></select>
             </fieldset>
             <fieldset aria-describedby="d-export"><legend>Export</legend>
-              <p class="desc" id="d-export">PNG and SVG save the frame on screen: pause, then scrub or step a frame at a time (<kbd>,</kbd> and <kbd>.</kbd>) to pick it. GIF and WebM record the whole loop. SVG is for the vector looks.</p>
+              <p class="desc" id="d-export">PNG and SVG save the frame on screen: pause, then scrub or step a frame at a time (<kbd>,</kbd> and <kbd>.</kbd>) to pick it. GIF, WebM and MP4 record the whole loop (video at 30 fps). SVG is for the vector looks.</p>
               <div class="exports">
                 <button class="btn small" type="button" data-x="gif">GIF</button>
                 <button class="btn small" type="button" data-x="png">PNG</button>
                 <button class="btn small" type="button" data-x="svg">SVG</button>
                 <button class="btn small" type="button" data-x="webm">WebM</button>
+                <button class="btn small" type="button" data-x="mp4" hidden>MP4</button>
                 <span class="status" id="status" role="status" aria-live="polite"></span>
               </div>
             </fieldset>
