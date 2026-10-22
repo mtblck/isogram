@@ -43,6 +43,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      # ffprobe, for verify's 30 fps check on the recorded WebM
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
       - run: npm run build
       - run: npm run site
       # every example in every look and theme draws, with no console errors, and exports;

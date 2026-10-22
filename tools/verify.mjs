@@ -129,7 +129,8 @@ for (const f of examples()) {
     const frames = +pr.stdout.trim(), want = vid.dur / 1000 * 30
     if (Math.abs(frames - want) > 4) fails.push(`starter: WebM has ${frames} frames, wanted about ${want} (30 fps)`)
     else console.log(`  ok   starter: WebM ${(fs.statSync(vf).size / 1024).toFixed(0)} KB, ${frames} frames (30 fps)`)
-  } else console.log('  (no ffprobe; WebM frame rate not checked)')
+  } else if (process.env.CI) fails.push('starter: ffprobe is missing, so the WebM frame rate went unchecked')
+  else console.log('  (no ffprobe; WebM frame rate not checked)')
   await page.close()
 }
 

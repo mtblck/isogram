@@ -93,7 +93,7 @@ Attributes: `look`, `theme`, `accent`, `background` (a hex colour for the card, 
 
 For an image instead of live code: `NAME-look.gif` (loops, only changed regions stored per frame), `.png` and `.svg` (SVG for glow, vector and blueprint), `.webm` and `.mp4` (30 fps; `--fps` to change it), `-steps.png` (one frame per beat, at each beat's `show` time). A PNG or SVG from the preview page is the frame on screen: tell the user to pause and use the scrubber or `,`/`.` to pick it. From `export.mjs` it is the `still` frame, or `--t ms`.
 
-Video from `export.mjs` renders every frame at its exact time and, when ffmpeg is installed, encodes VP9 / H.264 at constant quality (near-lossless for flat art, tiny files). Without ffmpeg, `webm` is recorded in the browser at the same 30 fps (a few hundred KB) and `mp4` is skipped. GIF stays at 20 fps (its timing is in 1/100 s) and 640 px wide unless `--width` is given. For a looping hero video, use `<video muted loop playsinline autoplay poster="NAME.png">` with the WebM first and the MP4 second.
+Video from `export.mjs` renders every frame at its exact time and, when ffmpeg is installed, encodes VP9 / H.264 at constant quality (clean on flat art, tiny files). Without ffmpeg, `webm` is recorded in the browser at the same 30 fps (a few hundred KB) and `mp4` is skipped. GIF stays at 20 fps (its timing is in 1/100 s) and 640 px wide unless `--width` is given. For a looping hero video, use `<video muted loop playsinline autoplay poster="NAME.png">` with the WebM first and the MP4 second.
 
 ## Rules that matter most (details in `references/craft.md`)
 

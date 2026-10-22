@@ -50,23 +50,36 @@ try {
     if (f === 'webm' || f === 'mp4') {
       fs.mkdirSync(out, { recursive: true }); const file = path.join(out, `${base}-${look}${o.theme ? '-' + o.theme : ''}.${f}`);
       const x = Object.assign({}, o, { look });
+      let how = 'browser recording';
       if (hasFfmpeg) {
         // frames straight into ffmpeg; width and height rounded to even numbers for yuv420p
         const n = await page.evaluate(({ vfps }) => Math.max(1, Math.round(document.querySelector('iso-gram').duration / 1000 * vfps)), { vfps });
         const ff = spawn('ffmpeg', ['-loglevel', 'error', '-y', '-f', 'image2pipe', '-framerate', String(vfps), '-i', '-', '-vf', 'pad=ceil(iw/2)*2:ceil(ih/2)*2', ...ENC[f], file], { stdio: ['pipe', 'inherit', 'inherit'] });
-        const done = new Promise((res, rej) => ff.on('close', c => c === 0 ? res() : rej(new Error('ffmpeg exited ' + c))));
-        for (let i = 0; i < n; i++) {
-          const png = await page.evaluate(({ x, i, n }) => { const el = document.querySelector('iso-gram');
-            return el.toCanvas(Object.assign({}, x, { t: i * el.duration / n })).toDataURL('image/png').split(',')[1]; }, { x, i, n });
-          if (!ff.stdin.write(Buffer.from(png, 'base64'))) await new Promise(r => ff.stdin.once('drain', r));
-        }
-        ff.stdin.end(); await done;
-      } else if (f === 'webm') {
+        // an ffmpeg without libvpx-vp9 or libx264 exits at once: writes then fail with EPIPE and 'drain' never comes
+        ff.stdin.on('error', () => {});
+        const done = new Promise((res, rej) => { ff.on('error', rej); ff.on('close', c => c === 0 ? res() : rej(new Error('ffmpeg exited ' + c))); });
+        done.catch(() => {});
+        let failed = null;
+        try {
+          for (let i = 0; i < n; i++) {
+            const png = await page.evaluate(({ x, i, n }) => { const el = document.querySelector('iso-gram');
+              return el.toCanvas(Object.assign({}, x, { t: i * el.duration / n })).toDataURL('image/png').split(',')[1]; }, { x, i, n });
+            if (ff.exitCode != null) throw new Error('ffmpeg exited ' + ff.exitCode);
+            if (!ff.stdin.write(Buffer.from(png, 'base64'))) await Promise.race([new Promise(r => ff.stdin.once('drain', r)), done]);
+          }
+          ff.stdin.end(); await done;
+          how = 'ffmpeg';
+        } catch (e) { failed = e; ff.kill(); fs.rmSync(file, { force: true }); }
+        if (failed && f === 'mp4') { console.error(`mp4: ${failed.message}; does this ffmpeg have libx264? skipped`); continue; }
+        if (failed) console.error(`webm: ${failed.message}; does this ffmpeg have libvpx-vp9? recording in the browser instead`);
+      }
+      if (how !== 'ffmpeg') {
+        if (f !== 'webm') { console.error('mp4 needs ffmpeg; skipped (webm works without it)'); continue; }
         const data = await page.evaluate(async ({ x, vfps }) => { const b = await document.querySelector('iso-gram').toVideo(Object.assign({}, x, { fps: vfps, type: 'webm' }));
           const buf = new Uint8Array(await b.arrayBuffer()); let s = ''; for (let i = 0; i < buf.length; i += 0x8000) s += String.fromCharCode(...buf.subarray(i, i + 0x8000)); return btoa(s); }, { x, vfps });
         fs.writeFileSync(file, Buffer.from(data, 'base64'));
-      } else { console.error('mp4 needs ffmpeg; skipped (webm works without it)'); continue; }
-      console.log('wrote', file, Math.round(fs.statSync(file).size / 1024) + ' KB', `(${vfps} fps${hasFfmpeg ? ', ffmpeg' : ', browser recording'})`);
+      }
+      console.log('wrote', file, Math.round(fs.statSync(file).size / 1024) + ' KB', `(${vfps} fps, ${how})`);
       continue;
     }
     const r = await page.evaluate(async ({ look, f, o }) => {
