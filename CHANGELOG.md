@@ -15,6 +15,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- getisogram.com: the hero diagram sits on the site's navy in both themes, and the gallery shows two diagrams light and two dark.
+
 ### Fixed
 
 - getisogram.com: control outlines now meet 3:1 contrast, larger step captions, the diagram shows on a phone's first screen, Install stays in the mobile nav, an icon theme toggle, and gallery captions name their look.

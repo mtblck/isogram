@@ -20,11 +20,17 @@
   })
   new MutationObserver(function () { paintThemeBtn(); followTheme(); if (main) apply() }).observe(root, { attributes: true, attributeFilter: ['data-theme'] })
 
-  // The hero and the gallery keep each diagram's own theme (most were drawn for dark), so they read as
-  // lit objects on the page's paper in both themes; the hero wears the page's accent.
-  var hero = $('#hero')
+  // The hero stays dark in both page themes, a lit machine on the site's navy card (blueprint and pixel keep
+  // their own grounds); the gallery shows two diagrams light and two dark, fixed in index.html, so it shows
+  // that every diagram themes. The hero wears the page's dark accent.
+  var hero = $('#hero'), NAVY = '#1a2030'
   function followTheme() { if (hero) hero.setAttribute('accent', ACCENT.dark) }
-  $$('#hero-looks input').forEach(function (r) { r.addEventListener('change', function () { hero.setAttribute('look', r.value) }) })
+  $$('#hero-looks input').forEach(function (r) {
+    r.addEventListener('change', function () {
+      hero.setAttribute('look', r.value)
+      if (r.value === 'glow' || r.value === 'vector') hero.setAttribute('background', NAVY); else hero.removeAttribute('background')
+    })
+  })
 
   // ---- playground ----
   var main = $('#pg')
