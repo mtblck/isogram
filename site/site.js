@@ -55,7 +55,7 @@
       if (a[k] != null) main.setAttribute(k, a[k]); else main.removeAttribute(k)
     })
     $$('input[name="pg-theme"]').forEach(function (r) { r.checked = r.value === st.theme })
-    $('#pg-pixel').disabled = st.look !== 'pixel'
+    $('#pg-pxbox').hidden = st.look !== 'pixel'   // only the pixel look has a pixel size
     $('#pg-accent').value = a.accent
     $('#pg-accent-reset').disabled = !st.accent
     $('#pg-bg').value = st.background || ISOGRAM.themeOf(st.look, st.theme).panel   // the look's own card colour until one is picked
@@ -110,20 +110,22 @@
   $('#copy-embed').addEventListener('click', function () { copy(this, $('#embed').textContent, $('#embed')) })
   $$('[data-copy]').forEach(function (b) { b.addEventListener('click', function () { var el = document.getElementById(b.dataset.copy); copy(b, el.textContent, el) }) })
 
-  // ---- install tabs (arrow keys move between them) ----
-  var tabs = $$('[role="tab"]')
-  function select(tab) {
-    tabs.forEach(function (t) {
-      var on = t === tab
-      t.setAttribute('aria-selected', on ? 'true' : 'false'); t.tabIndex = on ? 0 : -1
-      document.getElementById(t.getAttribute('aria-controls')).hidden = !on
-    })
-  }
-  tabs.forEach(function (t, i) {
-    t.addEventListener('click', function () { select(t) })
-    t.addEventListener('keydown', function (e) {
-      var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0
-      if (d) { var n = tabs[(i + d + tabs.length) % tabs.length]; select(n); n.focus(); e.preventDefault() }
+  // ---- tabs: the playground's settings and the install steps (arrow keys move between them) ----
+  $$('[role="tablist"]').forEach(function (list) {
+    var tabs = Array.prototype.slice.call(list.querySelectorAll('[role="tab"]'))
+    function select(tab) {
+      tabs.forEach(function (t) {
+        var on = t === tab
+        t.setAttribute('aria-selected', on ? 'true' : 'false'); t.tabIndex = on ? 0 : -1
+        document.getElementById(t.getAttribute('aria-controls')).hidden = !on
+      })
+    }
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { select(t) })
+      t.addEventListener('keydown', function (e) {
+        var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0
+        if (d) { var n = tabs[(i + d + tabs.length) % tabs.length]; select(n); n.focus(); e.preventDefault() }
+      })
     })
   })
 
