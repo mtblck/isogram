@@ -176,7 +176,7 @@ if (fs.existsSync(path.join(ROOT, 'dist', 'site', 'index.html'))) {
     if (await page.isHidden('#panel-code')) fails.push(`site/${theme}: install tabs do not switch`)
     const png = await page.evaluate(async () => (await document.querySelector('#pg').toPNG({ width: 400 })).size)
     if (!(png > 3000)) fails.push(`site/${theme}: playground PNG export is ${png} bytes`)
-    for (const d of ['/docs/', '/docs/api/', '/docs/craft/']) {
+    for (const d of ['/docs/', '/docs/skill/', '/docs/api/', '/docs/craft/']) {
       const r = await page.goto(base + d)
       if (!r.ok()) fails.push(`site: ${d} answered ${r.status()}`)
       if (!(await page.textContent('main')).trim()) fails.push(`site: ${d} is empty`)
