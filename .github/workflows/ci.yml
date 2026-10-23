@@ -19,17 +19,40 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
+        with:
+          # The PR merge commit and its base parent, for coverage of the changed lines.
+          fetch-depth: 2
       - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
       - run: npm ci
-      # parse checks, every example's scene at many times in every look, build.py, the skill's contents
-      - run: npm test
+      # parse checks, every example's scene at many times in every look, build.py, the skill's contents;
+      # `coverage` runs `npm test`'s tests and also writes coverage/lcov.info
+      - run: npm run coverage
       # every example through build.py, and dist/isogram.skill from the skill files only
       - run: npm run build
       # getisogram.com, as Vercel builds it
       - run: npm run site
+      # Report only: whole-repo and changed-line coverage in the job summary, plus
+      # coverage/diff-coverage.json for the Claude review. Fails only below the
+      # COVERAGE_MIN / DIFF_COVERAGE_MIN repository variables, when they are set.
+      - name: Coverage report
+        if: ${{ !cancelled() && hashFiles('coverage/lcov.info') != '' }}
+        run: node .github/scripts/coverage-report.mjs
+        env:
+          COVERAGE_MIN: ${{ vars.COVERAGE_MIN }}
+          DIFF_COVERAGE_MIN: ${{ vars.DIFF_COVERAGE_MIN }}
+      - name: Upload coverage
+        if: ${{ !cancelled() && hashFiles('coverage/lcov.info') != '' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage
+          path: |
+            coverage/lcov.info
+            coverage/diff-coverage.json
+          retention-days: 14
+          if-no-files-found: ignore
 
   e2e:
     name: E2E (real browser)

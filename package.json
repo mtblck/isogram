@@ -6,6 +6,7 @@
   "license": "MIT",
   "scripts": {
     "test": "node --test \"test/*.test.mjs\"",
+    "coverage": "mkdir -p coverage && node --test --experimental-test-coverage --test-coverage-exclude=\"test/**\" --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/lcov.info \"test/*.test.mjs\"",
     "build": "node tools/build.mjs",
     "verify": "node tools/verify.mjs",
     "site": "node tools/site.mjs",
