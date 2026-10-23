@@ -10,7 +10,7 @@ mattblack.space/skills/isogram redirects there. Tickets are this repo's issues, 
 
 `npm test` · `npm run build` (examples through `scripts/build.py` into `dist/examples/`, and
 `dist/isogram.skill`) · `npm run site` (getisogram.com into `dist/site`) · `npm run preview` (serves it with
-vercel.json's headers) · `npm run verify` after `build` and `site` (real-browser check; `CHROME_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome`
+vercel.json's headers) · `npm run verify` after `build` and `site` (real-browser check; `CHROME_PATH=/opt/pw-browsers/chromium`
 in Claude's cloud sandbox, where the Playwright CDN is blocked) · `node scripts/export.mjs dist/examples/NAME.html --formats sheet --looks glow,vector,pixel,blueprint`
 to review a diagram step by step.
 

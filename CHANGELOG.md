@@ -10,8 +10,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `--isogram-label-size` CSS property to size the card's captions and labels from the host page.
+
 ### Changed
 
 ### Fixed
+
+- getisogram.com: control outlines now meet 3:1 contrast, larger step captions, the diagram shows on a phone's first screen, Install stays in the mobile nav, an icon theme toggle, and gallery captions name their look.
 
 ### Security

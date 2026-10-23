@@ -11,7 +11,6 @@
   var themeBtn = $('#theme')
   function paintThemeBtn() {
     var next = pageTheme() === 'dark' ? 'light' : 'dark'
-    themeBtn.textContent = next === 'dark' ? 'Dark' : 'Light'
     themeBtn.setAttribute('aria-label', 'Switch to the ' + next + ' theme')
   }
   themeBtn.addEventListener('click', function () {
