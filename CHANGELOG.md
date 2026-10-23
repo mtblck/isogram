@@ -10,7 +10,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- getisogram.com/docs opens on "Using isogram", a page for people: install, asking for a good diagram, embedding and every `<iso-gram>` attribute. The skill's own files move under it, starting at /docs/skill/.
+- getisogram.com/docs opens on "Using isogram", a page for people: install, asking for a good diagram, embedding and every `<iso-gram>` attribute. The skill's own files move under it, starting at /docs/skill/; old guide links such as /docs/#workflow follow it there.
 - `--isogram-label-size` CSS property to size the card's captions and labels from the host page.
 
 ### Changed

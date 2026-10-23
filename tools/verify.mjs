@@ -187,6 +187,7 @@ if (fs.existsSync(path.join(ROOT, 'dist', 'site', 'index.html'))) {
       if (!r.ok()) fails.push(`site: ${d} answered ${r.status()}`)
       if (!(await page.textContent('main')).trim()) fails.push(`site: ${d} is empty`)
     }
+    await page.goto(base + '/docs/#workflow'); await page.waitForURL(/\/docs\/skill\/#workflow$/, { timeout: 3000 }).catch(() => fails.push('site: old guide anchor /docs/#workflow does not reach /docs/skill/'))
     const skill = await page.request.get(base + '/isogram.skill')
     if (!skill.ok() || (await skill.body()).length < 20000) fails.push('site: isogram.skill missing')
     if (errors.length) fails.push(`site/${theme}: console errors: ${errors.join(' | ')}`)
