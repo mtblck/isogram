@@ -32,11 +32,12 @@ fs.mkdirSync(path.join(out, 'fonts'), { recursive: true })
 font('@fontsource-variable/bricolage-grotesque', 'bricolage-grotesque-latin-standard-normal.woff2', 'bricolage.woff2')
 font('@fontsource-variable/jetbrains-mono', 'jetbrains-mono-latin-wght-normal.woff2', 'jetbrains-mono.woff2')
 
-// ---- docs: the skill's own markdown ----
+// ---- docs: one page written for people (site/docs/), then the skill's own markdown, as Claude reads it ----
 const PAGES = [
-  { path: '/docs/', source: 'SKILL.md', nav: 'Guide', description: 'How isogram works: the workflow Claude follows, the scene API in short, the looks, embedding and exporting.' },
-  { path: '/docs/api/', source: 'references/api.md', nav: 'API reference', description: 'Every builder, plane and timeline helper in isogram, the element\'s attributes and export methods, and how to add a look.' },
-  { path: '/docs/craft/', source: 'references/craft.md', nav: 'Design rules', description: 'The rules isogram diagrams follow, with reasons: choosing the object, parts, tone, motion, per-look notes and the review checklist.' },
+  { path: '/docs/', source: 'site/docs/start.md', nav: 'Using isogram', description: 'Install the isogram skill, ask Claude for a good diagram, embed it with one tag, and every attribute it takes.' },
+  { path: '/docs/skill/', source: 'SKILL.md', nav: 'Guide', forClaude: true, description: 'How isogram works: the workflow Claude follows, the scene API in short, the looks, embedding and exporting.' },
+  { path: '/docs/api/', source: 'references/api.md', nav: 'API reference', forClaude: true, description: 'Every builder, plane and timeline helper in isogram, the element\'s attributes and export methods, and how to add a look.' },
+  { path: '/docs/craft/', source: 'references/craft.md', nav: 'Design rules', forClaude: true, description: 'The rules isogram diagrams follow, with reasons: choosing the object, parts, tone, motion, per-look notes and the review checklist.' },
 ]
 const GH = 'https://github.com/mtblck/isogram/blob/main/'
 const linkTo = (href, from) => {
@@ -55,10 +56,12 @@ for (const p of PAGES) {
   renderer.heading = function ({ tokens, depth }) { const html = this.parser.parseInline(tokens); return `<h${depth} id="${slug(html)}">${html}</h${depth}>\n` }
   const html = marked.parse(md, { renderer, gfm: true })
   const title = (md.match(/^# (.+)$/m) || [, p.nav])[1]
-  const nav = PAGES.map(q => `<a href="${q.path}"${q === p ? ' aria-current="page"' : ''}>${q.nav}</a>`).join('')
+  const nav = PAGES.map((q, i) => (q.forClaude && !PAGES[i - 1].forClaude ? '<span class="group">The skill\'s files, as Claude reads them</span>' : '') +
+    `<a href="${q.path}"${q === p ? ' aria-current="page"' : ''}>${q.nav}</a>`).join('')
+  const note = p.forClaude ? 'These pages are the skill\'s own files, the same ones Claude reads.' : 'This page is for people using isogram; the skill\'s own files follow it in the docs.'
   const page = fs.readFileSync(src('docs.html'), 'utf8')
     .replaceAll('{{logo}}', LOGO).replace('{{title}}', esc(title)).replace('{{description}}', esc(p.description))
-    .replace('{{path}}', p.path).replace('{{nav}}', nav).replace('{{source}}', p.source).replace('{{content}}', () => html)
+    .replace('{{path}}', p.path).replace('{{nav}}', nav).replace('{{note}}', note).replace('{{source}}', p.source).replace('{{content}}', () => html)
   write(path.join(p.path, 'index.html'), page)
 }
 

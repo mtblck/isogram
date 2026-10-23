@@ -686,7 +686,7 @@
     :host { display:block; --aspect:4/3; container-type:inline-size; }
     :host([hidden]) { display:none; }
     .card { background:var(--panel); border:1px solid var(--line); border-radius:var(--radius,18px); padding:clamp(10px,3.2cqi,22px) clamp(12px,3.6cqi,26px);
-      display:grid; gap:clamp(4px,1cqi,8px); color:var(--ink); font:500 clamp(10px,1.9cqi,13px)/1.35 var(--font); }
+      display:grid; gap:clamp(4px,1cqi,8px); color:var(--ink); font:500 var(--isogram-label-size,clamp(10px,1.9cqi,13px))/1.35 var(--font); }
     .row { display:flex; flex-wrap:wrap; justify-content:space-between; gap:2px 16px; min-width:0; }
     .caps .row { text-transform:uppercase; letter-spacing:.13em; }
     .hi { color:var(--ink-hi); }

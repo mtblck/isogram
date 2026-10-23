@@ -11,7 +11,6 @@
   var themeBtn = $('#theme')
   function paintThemeBtn() {
     var next = pageTheme() === 'dark' ? 'light' : 'dark'
-    themeBtn.textContent = next === 'dark' ? 'Dark' : 'Light'
     themeBtn.setAttribute('aria-label', 'Switch to the ' + next + ' theme')
   }
   themeBtn.addEventListener('click', function () {
@@ -21,11 +20,17 @@
   })
   new MutationObserver(function () { paintThemeBtn(); followTheme(); if (main) apply() }).observe(root, { attributes: true, attributeFilter: ['data-theme'] })
 
-  // The hero and the gallery keep each diagram's own theme (most were drawn for dark), so they read as
-  // lit objects on the page's paper in both themes; the hero wears the page's accent.
-  var hero = $('#hero')
+  // The hero stays dark in both page themes, a lit machine on the site's navy card (blueprint and pixel keep
+  // their own grounds); the gallery shows two diagrams light and two dark, fixed in index.html, so it shows
+  // that every diagram themes. The hero wears the page's dark accent.
+  var hero = $('#hero'), NAVY = '#1a2030'
   function followTheme() { if (hero) hero.setAttribute('accent', ACCENT.dark) }
-  $$('#hero-looks input').forEach(function (r) { r.addEventListener('change', function () { hero.setAttribute('look', r.value) }) })
+  $$('#hero-looks input').forEach(function (r) {
+    r.addEventListener('change', function () {
+      hero.setAttribute('look', r.value)
+      if (r.value === 'glow' || r.value === 'vector') hero.setAttribute('background', NAVY); else hero.removeAttribute('background')
+    })
+  })
 
   // ---- playground ----
   var main = $('#pg')
@@ -50,7 +55,7 @@
       if (a[k] != null) main.setAttribute(k, a[k]); else main.removeAttribute(k)
     })
     $$('input[name="pg-theme"]').forEach(function (r) { r.checked = r.value === st.theme })
-    $('#pg-pixel').disabled = st.look !== 'pixel'
+    $('#pg-pxbox').hidden = st.look !== 'pixel'   // only the pixel look has a pixel size
     $('#pg-accent').value = a.accent
     $('#pg-accent-reset').disabled = !st.accent
     $('#pg-bg').value = st.background || ISOGRAM.themeOf(st.look, st.theme).panel   // the look's own card colour until one is picked
@@ -105,20 +110,22 @@
   $('#copy-embed').addEventListener('click', function () { copy(this, $('#embed').textContent, $('#embed')) })
   $$('[data-copy]').forEach(function (b) { b.addEventListener('click', function () { var el = document.getElementById(b.dataset.copy); copy(b, el.textContent, el) }) })
 
-  // ---- install tabs (arrow keys move between them) ----
-  var tabs = $$('[role="tab"]')
-  function select(tab) {
-    tabs.forEach(function (t) {
-      var on = t === tab
-      t.setAttribute('aria-selected', on ? 'true' : 'false'); t.tabIndex = on ? 0 : -1
-      document.getElementById(t.getAttribute('aria-controls')).hidden = !on
-    })
-  }
-  tabs.forEach(function (t, i) {
-    t.addEventListener('click', function () { select(t) })
-    t.addEventListener('keydown', function (e) {
-      var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0
-      if (d) { var n = tabs[(i + d + tabs.length) % tabs.length]; select(n); n.focus(); e.preventDefault() }
+  // ---- tabs: the playground's settings and the install steps (arrow keys move between them) ----
+  $$('[role="tablist"]').forEach(function (list) {
+    var tabs = Array.prototype.slice.call(list.querySelectorAll('[role="tab"]'))
+    function select(tab) {
+      tabs.forEach(function (t) {
+        var on = t === tab
+        t.setAttribute('aria-selected', on ? 'true' : 'false'); t.tabIndex = on ? 0 : -1
+        document.getElementById(t.getAttribute('aria-controls')).hidden = !on
+      })
+    }
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { select(t) })
+      t.addEventListener('keydown', function (e) {
+        var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0
+        if (d) { var n = tabs[(i + d + tabs.length) % tabs.length]; select(n); n.focus(); e.preventDefault() }
+      })
     })
   })
 

@@ -27,7 +27,7 @@
       <a href="/docs/">Docs</a>
       <a href="https://github.com/mtblck/isogram">GitHub</a>
     </nav>
-    <button class="theme" id="theme" type="button">Dark</button>
+    <button class="theme" id="theme" type="button" aria-label="Switch theme"><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
   </div></header>
 
   <main id="main">
@@ -42,7 +42,7 @@
         <p class="note">Free and open source (MIT). Works in Claude.ai and Claude Code.</p>
       </div>
       <figure aria-label="A live isogram diagram">
-        <iso-gram id="hero" name="robot" look="vector"></iso-gram>
+        <iso-gram id="hero" name="robot" look="vector" theme="dark" background="#1a2030"></iso-gram>
         <fieldset class="looks" id="hero-looks">
           <legend class="skip">Look</legend>
           <label><input type="radio" name="hero-look" value="glow" />Glow<small>hairline, lit</small></label>
@@ -61,20 +61,20 @@
         </div>
         <div class="gallery">
           <figure>
-            <iso-gram name="rocket" look="vector"></iso-gram>
-            <figcaption><b>Rocket round trip</b><blockquote>A rocket being built, launched into space, landing on a new platform and taken apart, then the loop starts over.</blockquote></figcaption>
+            <iso-gram name="rocket" look="vector" theme="light" background="#f8f9fb" accent="#2f45e6"></iso-gram>
+            <figcaption><b>Rocket round trip<span class="look">Vector, light</span></b><blockquote>A rocket being built, launched into space, landing on a new platform and taken apart, then the loop starts over.</blockquote></figcaption>
           </figure>
           <figure>
-            <iso-gram name="pumpkin" look="vector"></iso-gram>
-            <figcaption><b>Jack-o'-lantern</b><blockquote>Carving a jack-o'-lantern in five steps, on a spooky altar.</blockquote></figcaption>
+            <iso-gram name="pumpkin" look="vector" theme="dark" background="#1a2030" accent="#8e9bff"></iso-gram>
+            <figcaption><b>Jack-o'-lantern<span class="look">Vector, dark</span></b><blockquote>Carving a jack-o'-lantern in five steps, on a spooky altar.</blockquote></figcaption>
           </figure>
           <figure>
-            <iso-gram name="robot" look="pixel"></iso-gram>
-            <figcaption><b>Robot assembly</b><blockquote>The body flickers into existence, the head spirals down to screw on, claws bring in the arms, and the legs come up from below.</blockquote></figcaption>
+            <iso-gram name="robot" look="pixel" theme="light"></iso-gram>
+            <figcaption><b>Robot assembly<span class="look">Pixel, light</span></b><blockquote>The body flickers into existence, the head spirals down to screw on, claws bring in the arms, and the legs come up from below.</blockquote></figcaption>
           </figure>
           <figure>
-            <iso-gram name="starter" look="blueprint"></iso-gram>
-            <figcaption><b>Request and response</b><blockquote>A request travelling to a server and the response coming back.</blockquote></figcaption>
+            <iso-gram name="starter" look="blueprint" theme="dark"></iso-gram>
+            <figcaption><b>Request and response<span class="look">Blueprint, dark</span></b><blockquote>A request travelling to a server and the response coming back.</blockquote></figcaption>
           </figure>
         </div>
       </div>
@@ -87,76 +87,82 @@
           <p>This is the same component you embed. Change it here, then copy the tag or export a file.</p>
         </div>
         <div class="playground">
-          <div>
+          <div class="pg-preview">
             <iso-gram id="pg" name="rocket" look="vector" controls></iso-gram>
-            <div class="code">
-              <div class="code-head"><span>Embed code</span><button class="btn small" id="copy-embed" type="button">Copy</button></div>
-              <pre><code id="embed"></code></pre>
-            </div>
           </div>
-          <div class="panel">
-            <fieldset aria-describedby="d-name"><legend>Diagram</legend>
-              <p class="desc" id="d-name">The four examples from above.</p>
-              <div class="seg">
-                <label><input type="radio" name="pg-name" value="rocket" checked />Rocket</label>
-                <label><input type="radio" name="pg-name" value="robot" />Robot</label>
-                <label><input type="radio" name="pg-name" value="pumpkin" />Jack-o'-lantern</label>
-                <label><input type="radio" name="pg-name" value="starter" />Request</label>
+          <div class="inspector">
+            <div class="ptabs" role="tablist" aria-label="Playground settings">
+              <button role="tab" id="ptab-scene" aria-controls="ppanel-scene" aria-selected="true" type="button">Scene</button>
+              <button role="tab" id="ptab-style" aria-controls="ppanel-style" aria-selected="false" tabindex="-1" type="button">Style</button>
+              <button role="tab" id="ptab-show" aria-controls="ppanel-show" aria-selected="false" tabindex="-1" type="button">Show</button>
+            </div>
+            <div class="ppanel" role="tabpanel" id="ppanel-scene" aria-labelledby="ptab-scene">
+              <fieldset><legend>Diagram</legend>
+                <div class="seg">
+                  <label><input type="radio" name="pg-name" value="rocket" checked />Rocket</label>
+                  <label><input type="radio" name="pg-name" value="robot" />Robot</label>
+                  <label><input type="radio" name="pg-name" value="pumpkin" />Jack-o'-lantern</label>
+                  <label><input type="radio" name="pg-name" value="starter" />Request</label>
+                </div>
+              </fieldset>
+              <fieldset><legend>Look</legend>
+                <div class="seg">
+                  <label><input type="radio" name="pg-look" value="glow" />Glow</label>
+                  <label><input type="radio" name="pg-look" value="vector" checked />Vector</label>
+                  <label><input type="radio" name="pg-look" value="pixel" />Pixel</label>
+                  <label><input type="radio" name="pg-look" value="blueprint" />Blueprint</label>
+                </div>
+              </fieldset>
+              <fieldset aria-describedby="d-theme"><legend>Theme</legend>
+                <div class="seg">
+                  <label><input type="radio" name="pg-theme" value="light" />Light</label>
+                  <label><input type="radio" name="pg-theme" value="dark" checked />Dark</label>
+                </div>
+                <p class="desc" id="d-theme">Leave <code>theme</code> off your tag and it follows each visitor's system setting.</p>
+              </fieldset>
+            </div>
+            <div class="ppanel" role="tabpanel" id="ppanel-style" aria-labelledby="ptab-style" hidden>
+              <fieldset aria-describedby="d-accent"><legend>Accent</legend>
+                <div class="checks">
+                  <label><input type="color" id="pg-accent" value="#8e9bff" aria-label="Accent colour" />Colour</label>
+                  <button class="btn small" type="button" id="pg-accent-reset" disabled>Reset</button>
+                </div>
+                <p class="desc" id="d-accent">Whatever is active right now: lit parts, the current step.</p>
+              </fieldset>
+              <fieldset aria-describedby="d-bg"><legend>Card</legend>
+                <div class="checks">
+                  <label><input type="color" id="pg-bg" value="#16171d" aria-label="Card colour" />Colour</label>
+                  <button class="btn small" type="button" id="pg-bg-reset" disabled>Reset</button>
+                </div>
+                <p class="desc" id="d-bg">Pair a dark card with the Dark theme, so the text stays readable.</p>
+              </fieldset>
+              <fieldset id="pg-pxbox" hidden><legend>Pixel size</legend>
+                <select id="pg-pixel" aria-label="Pixel size"><option value="1" selected>1, finest</option><option value="2">2</option><option value="3">3, chunkiest</option></select>
+              </fieldset>
+            </div>
+            <div class="ppanel" role="tabpanel" id="ppanel-show" aria-labelledby="ptab-show" hidden>
+              <fieldset><legend>Show</legend>
+                <div class="checks col">
+                  <label><input type="checkbox" id="pg-frame" checked />The card around the diagram</label>
+                  <label><input type="checkbox" id="pg-labels" checked />Captions and readout</label>
+                  <label><input type="checkbox" id="pg-progress" checked />Progress bar</label>
+                </div>
+              </fieldset>
+            </div>
+            <div class="use">
+              <div class="code">
+                <pre><code id="embed"></code></pre>
+                <button class="btn small primary" id="copy-embed" type="button">Copy tag</button>
               </div>
-            </fieldset>
-            <fieldset aria-describedby="d-look"><legend>Look</legend>
-              <p class="desc" id="d-look">How the same scene is drawn. Any diagram works in every look.</p>
-              <div class="seg">
-                <label><input type="radio" name="pg-look" value="glow" />Glow</label>
-                <label><input type="radio" name="pg-look" value="vector" checked />Vector</label>
-                <label><input type="radio" name="pg-look" value="pixel" />Pixel</label>
-                <label><input type="radio" name="pg-look" value="blueprint" />Blueprint</label>
-              </div>
-            </fieldset>
-            <fieldset aria-describedby="d-theme"><legend>Theme</legend>
-              <p class="desc" id="d-theme">Starts on the theme the diagram was drawn for. Leave <code>theme</code> off your tag and it follows each visitor's system setting.</p>
-              <div class="seg">
-                <label><input type="radio" name="pg-theme" value="light" />Light</label>
-                <label><input type="radio" name="pg-theme" value="dark" checked />Dark</label>
-              </div>
-            </fieldset>
-            <fieldset aria-describedby="d-show"><legend>Show</legend>
-              <p class="desc" id="d-show">The card around the diagram, the step captions and readout, and the progress bar.</p>
-              <div class="checks">
-                <label><input type="checkbox" id="pg-frame" checked />Card</label>
-                <label><input type="checkbox" id="pg-labels" checked />Captions</label>
-                <label><input type="checkbox" id="pg-progress" checked />Progress</label>
-              </div>
-            </fieldset>
-            <fieldset aria-describedby="d-accent"><legend>Accent</legend>
-              <p class="desc" id="d-accent">The one colour for whatever is active right now: lit parts, the current step.</p>
-              <div class="checks">
-                <label><input type="color" id="pg-accent" value="#8e9bff" aria-label="Accent colour" />Colour</label>
-                <button class="btn small" type="button" id="pg-accent-reset" disabled>Reset</button>
-              </div>
-            </fieldset>
-            <fieldset aria-describedby="d-bg"><legend>Background</legend>
-              <p class="desc" id="d-bg">The card behind the drawing, and the frame around it in exports. The theme's text stays light or dark, so pair a dark background with Dark.</p>
-              <div class="checks">
-                <label><input type="color" id="pg-bg" value="#16171d" aria-label="Background colour" />Colour</label>
-                <button class="btn small" type="button" id="pg-bg-reset" disabled>Reset</button>
-              </div>
-            </fieldset>
-            <fieldset aria-describedby="d-pixel" id="pg-pxbox"><legend>Pixel size</legend>
-              <p class="desc" id="d-pixel">Pixel look only: how many screen pixels make one art pixel. 1 is the finest; 2 and 3 are chunkier.</p>
-              <select id="pg-pixel" aria-label="Pixel size" disabled><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option></select>
-            </fieldset>
-            <fieldset aria-describedby="d-export"><legend>Export</legend>
-              <p class="desc" id="d-export">PNG and SVG save the frame on screen: pause, then scrub or step a frame at a time (<kbd>,</kbd> and <kbd>.</kbd>) to pick it. GIF, WebM and MP4 record the whole loop (video at 30 fps). SVG is for the vector looks.</p>
-              <div class="exports">
+              <div class="exports" aria-describedby="status">
                 <button class="btn small" type="button" data-x="gif">GIF</button>
+                <button class="btn small" type="button" data-x="mp4" hidden>MP4</button>
+                <button class="btn small" type="button" data-x="webm">WebM</button>
                 <button class="btn small" type="button" data-x="png">PNG</button>
                 <button class="btn small" type="button" data-x="svg">SVG</button>
-                <button class="btn small" type="button" data-x="webm">WebM</button>
-                <button class="btn small" type="button" data-x="mp4" hidden>MP4</button>
-                <span class="status" id="status" role="status" aria-live="polite"></span>
               </div>
-            </fieldset>
+              <p class="status" id="status" role="status" aria-live="polite">PNG and SVG save the frame on screen; pause and step with <kbd>,</kbd> and <kbd>.</kbd> to pick it.</p>
+            </div>
           </div>
         </div>
       </div>
