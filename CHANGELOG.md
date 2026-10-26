@@ -17,6 +17,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - getisogram.com playground: settings sit in Scene, Style and Show tabs beside the preview, never taller than it, with the tag and downloads always at the bottom; on phones the preview stays pinned while the settings scroll. Pixel size shows only for the Pixel look.
 - getisogram.com: the hero diagram sits on the site's navy in both themes, and the gallery shows two diagrams light and two dark.
+- CLAUDE.md: review a PR in the session before marking it ready (#37)
 
 ### Fixed
 
