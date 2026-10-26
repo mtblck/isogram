@@ -19,7 +19,7 @@ const LOGO = '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 28 10 1
 
 // ---- landing page and static files ----
 write('index.html', fs.readFileSync(src('index.html'), 'utf8').replaceAll('{{logo}}', LOGO))
-for (const f of ['site.css', 'site.js', 'theme.js', 'docs.js', 'icon.svg', 'og.png']) if (fs.existsSync(src(f))) fs.copyFileSync(src(f), path.join(out, f))
+for (const f of ['site.css', 'site.js', 'theme.js', 'analytics.js', 'docs.js', 'icon.svg', 'og.png']) if (fs.existsSync(src(f))) fs.copyFileSync(src(f), path.join(out, f))
 write('isogram.js', read('assets/isogram.js'))
 write('examples.js', examples().map(f => read(`examples/${f}`)).join('\n'))
 const files = skillFiles()
