@@ -6,6 +6,9 @@
   "outputDirectory": "dist/site",
   "cleanUrls": false,
   "trailingSlash": true,
+  "rewrites": [
+    { "source": "/_mb/events/", "destination": "https://mattblack.space/boards/api/events" }
+  ],
   "headers": [
     {
       "source": "/(.*)",

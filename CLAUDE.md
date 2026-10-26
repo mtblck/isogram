@@ -36,6 +36,9 @@ Marking it ready also triggers the Claude review workflow.
 - **The site's CSP is `script-src 'self'`.** No inline scripts or handlers (`test/site.test.mjs` guards it); the
   theme is set by `site/theme.js` before first paint. Fonts are self-hosted from `@fontsource-variable`.
   The site copies the runtime, examples and skill package in at build, so it always shows what ships.
+- **Counts only.** Page views via `site/analytics.js` (Vercel Web Analytics, cookieless); "used it" events
+  (`skill_downloaded`, `copied`, `exported`) via `track()` in `site/site.js` to `/_mb/events/`, which vercel.json
+  rewrites to Boards' shared counter (trailing slash, or `trailingSlash` redirects it). Only the event name is sent.
 - **Licence is MIT** (LICENSE is the plain text so GitHub detects it); credits for iso-glow/iso-figure,
   anatomy and the Sweetie 16 palette live in README.
 - **Claude commits for Matt as `mtblck <105079242+mtblck@users.noreply.github.com>`.** Vercel blocks

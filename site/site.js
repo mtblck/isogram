@@ -7,6 +7,15 @@
   var ACCENT = { light: '#2f45e6', dark: '#8e9bff' }
   var pageTheme = function () { return root.dataset.theme === 'dark' ? 'dark' : 'light' }
 
+  // ---- "used it" counts for mattblack.space/analytics (mtblck/boards docs/events.md) ----
+  // Only the event's name is sent, to this site, which vercel.json rewrites to
+  // the shared counter; the CSP stays connect-src 'self'. Never off getisogram.com.
+  function track(event) {
+    if (location.hostname !== 'getisogram.com' || typeof navigator.sendBeacon !== 'function') return
+    navigator.sendBeacon('/_mb/events/', JSON.stringify({ project: 'isogram', event: event }))
+  }
+  $$('a[href="/isogram.skill"]').forEach(function (a) { a.addEventListener('click', function () { track('skill_downloaded') }) })
+
   // ---- theme ----
   var themeBtn = $('#theme')
   function paintThemeBtn() {
@@ -96,6 +105,7 @@
           save(await main.toVideo(Object.assign({}, o, { type: x, onProgress: function (p) { status.textContent = 'Recording one loop at 30 fps… ' + Math.round(p * 100) + '%' } })), base + '.' + x)
         }
         status.textContent = 'Saved ' + base + '.' + x
+        track('exported')
       } catch (e) { status.textContent = 'Export failed: ' + e.message }
       finally { $$('[data-x]').forEach(function (y) { y.disabled = false }) }
     })
@@ -103,6 +113,7 @@
 
   // ---- copy buttons ----
   async function copy(btn, text, el) {
+    track('copied')
     try { await navigator.clipboard.writeText(text); btn.textContent = 'Copied' }
     catch (e) { var r = document.createRange(); r.selectNodeContents(el); var s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Press Ctrl+C' }
     setTimeout(function () { btn.textContent = 'Copy' }, 1600)
