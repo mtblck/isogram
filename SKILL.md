@@ -1,6 +1,6 @@
 ---
 name: isogram
-description: Build animated isometric "how it works" diagrams for web pages: a small physical machine whose motion explains a product feature (calls routed, jobs queued, data synced), with step captions and a live readout. One scene renders in several looks (glow hairline, clean vector, 2:1 pixel art, blueprint; light and dark) and exports as a drop-in <iso-gram> web component (HTML+CSS+JS), a self-contained embed snippet, GIF, PNG, SVG, WebM and a step sheet. Use for feature explainers, landing-page or docs illustrations, onboarding visuals, isometric animated diagrams, pixel-art or vector isometric illustrations, and "iso-glow"/"anatomy"-style figures meant to be embedded.
+description: Build animated isometric "how it works" diagrams for web pages: a small physical machine whose motion explains a product feature (calls routed, jobs queued, data synced), with step captions and a live readout. One scene renders in several looks (glow hairline, clean vector, 2:1 pixel art, blueprint; light and dark) and exports as a drop-in iso-gram web component (HTML+CSS+JS), a self-contained embed snippet, GIF, PNG, SVG, WebM and a step sheet. Use for feature explainers, landing-page or docs illustrations, onboarding visuals, isometric animated diagrams, pixel-art or vector isometric illustrations, and "iso-glow"/"anatomy"-style figures meant to be embedded.
 ---
 
 # isogram

@@ -15,6 +15,10 @@ test('SKILL.md has the frontmatter Claude needs', () => {
   const name = m[1].match(/^name: (.+)$/m)?.[1], desc = m[1].match(/^description: (.+)$/m)?.[1]
   assert.equal(name, 'isogram')
   assert.ok(desc && desc.length <= 1024, `description present and ≤ 1024 chars (is ${desc?.length})`)
+  // Claude's skill upload rejects angle brackets in the frontmatter ("description cannot contain XML"),
+  // so write the element as plain iso-gram here; the body of SKILL.md can still say <iso-gram>.
+  for (const [k, v] of Object.entries({ name, description: desc }))
+    assert.doesNotMatch(v, /[<>]/, `${k} must not contain < or > (the skill validator reads them as XML tags)`)
 })
 
 test('every file SKILL.md points to exists', () => {
