@@ -16,6 +16,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Count skill downloads, copies and exports for /analytics (#40)
 - Count page views on the shared counter (#41)
+- Keep angle brackets out of the skill description (#43)
 
 ### Fixed
 
