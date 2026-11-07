@@ -19,7 +19,7 @@ const LOGO = '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 28 10 1
 
 // ---- landing page and static files ----
 write('index.html', fs.readFileSync(src('index.html'), 'utf8').replaceAll('{{logo}}', LOGO))
-for (const f of ['site.css', 'site.js', 'theme.js', 'analytics.js', 'docs.js', 'icon.svg', 'og.png']) if (fs.existsSync(src(f))) fs.copyFileSync(src(f), path.join(out, f))
+for (const f of ['site.css', 'site.js', 'theme.js', 'analytics.js', 'docs.js', 'tip.js', 'icon.svg', 'og.png']) if (fs.existsSync(src(f))) fs.copyFileSync(src(f), path.join(out, f))
 write('isogram.js', read('assets/isogram.js'))
 write('examples.js', examples().map(f => read(`examples/${f}`)).join('\n'))
 const files = skillFiles()
@@ -31,6 +31,12 @@ const font = (pkg, file, as) => fs.copyFileSync(path.join(path.dirname(req.resol
 fs.mkdirSync(path.join(out, 'fonts'), { recursive: true })
 font('@fontsource-variable/bricolage-grotesque', 'bricolage-grotesque-latin-standard-normal.woff2', 'bricolage.woff2')
 font('@fontsource-variable/jetbrains-mono', 'jetbrains-mono-latin-wght-normal.woff2', 'jetbrains-mono.woff2')
+
+// the floating support button (tipjar), self-hosted like the fonts: its ES modules and stylesheet
+const tipjar = path.dirname(req.resolve('tipjar/package.json'))
+fs.mkdirSync(path.join(out, 'tipjar'), { recursive: true })
+for (const f of fs.readdirSync(path.join(tipjar, 'dist'))) if (f.endsWith('.js')) fs.copyFileSync(path.join(tipjar, 'dist', f), path.join(out, 'tipjar', f))
+fs.copyFileSync(path.join(tipjar, 'style.css'), path.join(out, 'tipjar', 'style.css'))
 
 // ---- docs: one page written for people (site/docs/), then the skill's own markdown, as Claude reads it ----
 const PAGES = [

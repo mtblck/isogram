@@ -10,7 +10,7 @@ const out = path.join(ROOT, 'dist', 'site')
 test('the site builds', () => {
   const r = spawnSync(process.execPath, [path.join(ROOT, 'tools/site.mjs')], { encoding: 'utf8' })
   assert.equal(r.status, 0, r.stderr)
-  for (const f of ['index.html', 'docs/index.html', 'docs/skill/index.html', 'docs/api/index.html', 'docs/craft/index.html', 'isogram.js', 'examples.js', 'isogram.skill', 'fonts/bricolage.woff2', 'og.png'])
+  for (const f of ['index.html', 'docs/index.html', 'docs/skill/index.html', 'docs/api/index.html', 'docs/craft/index.html', 'isogram.js', 'examples.js', 'isogram.skill', 'fonts/bricolage.woff2', 'og.png', 'tip.js', 'tipjar/index.js', 'tipjar/style.css'])
     assert.ok(fs.existsSync(path.join(out, f)), `${f} missing`)
 })
 
