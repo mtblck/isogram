@@ -212,3 +212,12 @@ footer p { margin: 0 0 8px; max-width: 60em; }
 
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
 .prose :not(pre) > code { overflow-wrap: anywhere; }
+
+/* the floating support button (tipjar): the page's cobalt, ringed in paper; it tucks away at the footer */
+:root {
+  --tipjar-bg: var(--accent);
+  --tipjar-label: var(--accent-ink);
+  --tipjar-ring: var(--paper);
+  --tipjar-font: var(--sans);
+  --tipjar-icon-size: 24px;   /* pixel icons sit on a 12px grid */
+}
