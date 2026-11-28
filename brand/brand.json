@@ -1,0 +1,128 @@
+{
+  "name": "isogram",
+  "shortName": "isogram",
+  "tagline": "Diagrams that build the thing they explain.",
+  "about": "isogram is a Claude skill for animated isometric diagrams that explain how a feature works. You describe the feature; Claude invents a small machine whose motion is the explanation, and hands it back as a web component, a GIF, a PNG or an SVG.\n\nThe mark is the smallest isometric thing there is: one cube on drafting paper, its top face in the cobalt that marks whatever is live, its sides in the two inks of the page.",
+  "construction": "On a 256 grid: three faces of one cube, the top vertex at (128, 24) and the foot at (128, 240), each face rising 56 for every 96 across; the one-colour version cuts the inner Y out 14 wide.",
+  "website": "getisogram.com",
+  "colors": [
+    {
+      "name": "Ink",
+      "hex": "#18202e",
+      "role": "primary",
+      "usage": "The wordmark, text, and the cube's left face."
+    },
+    {
+      "name": "Cobalt",
+      "hex": "#2f45e6",
+      "role": "accent",
+      "usage": "The cube's top face and whatever is live or pressable; one per view."
+    },
+    {
+      "name": "Drafting Paper",
+      "hex": "#eef1f5",
+      "role": "paper",
+      "usage": "The light page, under the dot lattice."
+    },
+    {
+      "name": "Night",
+      "hex": "#151a24",
+      "role": "dark",
+      "usage": "The dark page."
+    },
+    {
+      "name": "Hero Navy",
+      "hex": "#1a2030",
+      "role": "support",
+      "usage": "The landing hero in both themes, cards in dark mode, and the icon tile."
+    },
+    {
+      "name": "Slate",
+      "hex": "#4a5468",
+      "role": "support",
+      "usage": "Secondary text and the cube's right face."
+    },
+    {
+      "name": "Periwinkle",
+      "hex": "#8e9bff",
+      "role": "support",
+      "usage": "Cobalt's stand-in on dark grounds: the dark cube's top and dark-mode links."
+    }
+  ],
+  "type": {
+    "display": {
+      "family": "Bricolage Grotesque",
+      "weight": 700
+    },
+    "text": {
+      "family": "Bricolage Grotesque",
+      "weight": 400
+    }
+  },
+  "logos": {
+    "mark": {
+      "file": "mark.svg",
+      "dark": "mark-dark.svg",
+      "black": "mark-black.svg",
+      "minWidth": 16
+    },
+    "horizontal": {
+      "file": "logo-horizontal.svg",
+      "dark": "logo-horizontal-dark.svg",
+      "black": "logo-horizontal-black.svg",
+      "minWidth": 96
+    },
+    "stacked": {
+      "file": "logo-stacked.svg",
+      "dark": "logo-stacked-dark.svg",
+      "black": "logo-stacked-black.svg",
+      "minWidth": 64
+    }
+  },
+  "icon": {
+    "file": "mark-dark.svg",
+    "background": "#1a2030",
+    "favicon": "favicon.svg"
+  },
+  "clearSpace": 0.25,
+  "social": {
+    "background": "#eef1f5"
+  },
+  "templates": {
+    "background": "#1a2030",
+    "social": {
+      "kicker": "getisogram.com"
+    }
+  },
+  "palette": {
+    "brand": "#2f45e6",
+    "accent": false
+  },
+  "direction": {
+    "words": [
+      "precise",
+      "playful",
+      "technical"
+    ],
+    "pairs": {
+      "tone": "between",
+      "era": "modern",
+      "volume": "quiet",
+      "finish": "crafted"
+    },
+    "lives": "web",
+    "weirdness": 2
+  },
+  "legal": {
+    "owner": "Matt Black",
+    "codeLicense": "MIT",
+    "contact": "https://github.com/mtblck/isogram/issues"
+  },
+  "portfolio": {
+    "cover": "portfolio/cover.svg",
+    "mobile": "portfolio/cover-mobile.svg",
+    "alt": "On navy isometric dot paper, one blue cube is lowered on a cable into the last gap of a block of white cubes, while spare cubes wait in front."
+  },
+  "exports": "all",
+  "out": "dist"
+}
