@@ -60,4 +60,6 @@ CI runs all three on every pull request, and Claude reviews a PR when it's marke
 
 ## Credits
 
-MIT licensed. Built on [iso-glow](https://iso-glow.vercel.app) (after [iso-figure](https://github.com/MrBongoC/ai-iso-skill) by Tolga Cohce, MIT) and anatomy (MIT). Pixel palette after Sweetie 16 by GrafxKid.
+The code is MIT licensed. The isogram name and logos, and everything in `brand/` (and their copies in `site/icons/`, `site/og.png` and the header logo in `tools/site.mjs`), are not; see `brand/LICENSE` and `brand/TRADEMARKS.md`.
+
+Built on [iso-glow](https://iso-glow.vercel.app) (after [iso-figure](https://github.com/MrBongoC/ai-iso-skill) by Tolga Cohce, MIT) and anatomy (MIT). Pixel palette after Sweetie 16 by GrafxKid.

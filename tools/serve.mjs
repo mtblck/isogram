@@ -7,7 +7,7 @@ import { ROOT } from './skill-files.mjs'
 
 const dir = path.join(ROOT, 'dist', 'site'), port = +(process.env.PORT || 4180)
 const conf = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'))
-const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.png': 'image/png', '.woff2': 'font/woff2', '.xml': 'application/xml', '.txt': 'text/plain', '.skill': 'application/octet-stream' }
+const TYPES = { '.html': 'text/html; charset=utf-8', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml', '.png': 'image/png', '.woff2': 'font/woff2', '.xml': 'application/xml', '.txt': 'text/plain', '.skill': 'application/octet-stream', '.ico': 'image/x-icon', '.webmanifest': 'application/manifest+json' }
 const match = (src, p) => new RegExp('^' + src.replace(/\(\.\*\)/g, '(.*)') + '$').test(p)
 
 http.createServer((req, res) => {

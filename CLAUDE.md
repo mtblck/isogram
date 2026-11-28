@@ -40,7 +40,8 @@ Marking it ready also triggers the Claude review workflow.
   to `/_mb/events/` with the referring host on an arrival; Boards ADR 0005); "used it" events
   (`skill_downloaded`, `copied`, `exported`) via `track()` in `site/site.js` to `/_mb/events/`, which vercel.json
   rewrites to Boards' shared counter (trailing slash, or `trailingSlash` redirects it). Only the event name is sent.
-- **Licence is MIT** (LICENSE is the plain text so GitHub detects it); credits for iso-glow/iso-figure,
+- **Licence is MIT** (LICENSE is the plain text so GitHub detects it), except the brand: the name, logos and
+  `brand/` (and their copies in `site/icons/`, `site/og.png`) are all rights reserved (`brand/LICENSE`, ADR 0001); credits for iso-glow/iso-figure,
   anatomy and the Sweetie 16 palette live in README.
 - **Claude commits for Matt as `mtblck <105079242+mtblck@users.noreply.github.com>`.** Vercel blocks
   deploys whose author email isn't linked to Matt's account.
