@@ -11,6 +11,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - Add Vercel Web Analytics page views (#39)
+- Add the isogram brand kit and use it on the site (#49)
 
 ### Changed
 
