@@ -6,7 +6,7 @@ public: false
 
 - **Status:** Accepted
 - **Date:** 2026-11-28
-- **PR:** (this PR)
+- **PR:** [#49](https://github.com/mtblck/isogram/pull/49)
 
 ## Context
 
