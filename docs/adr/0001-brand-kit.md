@@ -29,4 +29,6 @@ brand out of the MIT license. The export (`brand/dist/`, ~16 MB) is ignored by g
 The logo can be changed by editing code, and the guidelines, icons and templates follow from one run.
 The colours are the site's tokens, so a token change in `site/site.css` should be copied into
 `brand/draw.mjs` and exported again. `brand/` never ships in `isogram.skill` (only `SHIPPED` does).
-The site still draws its own copy of the cube; switching it to the kit's icons is a separate change.
+The site uses the kit too: `site/icons/` is a copy of `brand/dist/icons/` (favicons, app icons, manifest), `site/og.png` is
+`brand/dist/social/og-image.png`, and the header logo in `tools/site.mjs` is the kit's mark coloured by the page's
+tokens. After a new export, copy those files across again.

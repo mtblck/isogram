@@ -26,6 +26,10 @@
       "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
     },
     {
+      "source": "/site.webmanifest",
+      "headers": [{ "key": "Content-Type", "value": "application/manifest+json" }]
+    },
+    {
       "source": "/isogram.skill",
       "headers": [
         { "key": "Content-Type", "value": "application/zip" },

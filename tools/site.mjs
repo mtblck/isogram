@@ -15,11 +15,15 @@ const read = p => fs.readFileSync(path.join(ROOT, p), 'utf8')
 const write = (p, s) => { const f = path.join(out, p); fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, s) }
 fs.rmSync(out, { recursive: true, force: true })
 
-const LOGO = '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 28 10 16 17 4 10Z" fill="var(--accent)"/><path d="M4 10 16 17V30L4 23Z" fill="var(--ink)"/><path d="M16 17 28 10V23L16 30Z" fill="var(--ink-2)"/></svg>'
+// The mark from brand/mark.svg (brand/draw.mjs), coloured by the page's tokens so it follows the theme:
+// light is the kit's mark.svg, dark its mark-dark.svg.
+const LOGO = '<svg viewBox="32 24 192 216" aria-hidden="true"><path d="M128 24 224 80 128 136 32 80Z" fill="var(--accent)"/><path d="M32 80 128 136V240L32 184Z" fill="var(--ink)"/><path d="M128 136 224 80V184L128 240Z" fill="var(--ink-2)"/></svg>'
 
 // ---- landing page and static files ----
 write('index.html', fs.readFileSync(src('index.html'), 'utf8').replaceAll('{{logo}}', LOGO))
-for (const f of ['site.css', 'site.js', 'theme.js', 'analytics.js', 'docs.js', 'icon.svg', 'og.png']) if (fs.existsSync(src(f))) fs.copyFileSync(src(f), path.join(out, f))
+for (const f of ['site.css', 'site.js', 'theme.js', 'analytics.js', 'docs.js', 'og.png']) if (fs.existsSync(src(f))) fs.copyFileSync(src(f), path.join(out, f))
+// favicons, app icons and the manifest: brand/dist/icons/ from the brand kit, served from the root
+for (const f of fs.readdirSync(src('icons'))) fs.copyFileSync(src(`icons/${f}`), path.join(out, f))
 write('isogram.js', read('assets/isogram.js'))
 write('examples.js', examples().map(f => read(`examples/${f}`)).join('\n'))
 const files = skillFiles()
